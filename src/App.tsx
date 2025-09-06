@@ -270,7 +270,7 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                name: "Bartek Gibek",
+                name: "Anna Młynek",
                 location: "Żory",
                 rating: 5,
                 text: "Fantastyczna ekipa! Przeprowadzka przebiegła sprawnie i bez stresu. Chłopaki są bardzo pomocni i punktualni. Polecam z całego serca!"
