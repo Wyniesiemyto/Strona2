@@ -537,7 +537,7 @@ function App() {
               </div>
             </div>
             <div className="mt-8 pt-8 border-t border-gray-800 text-gray-400 text-sm">
-              <p>&copy; 2024 WyniesiemyTo.pl - Kacper Zagermann / Patryk Sylwerski. Wszystkie prawa zastrzeżone.</p>
+              <p>&copy; 2025 WyniesiemyTo.pl - Kacper Zagermann / Patryk Sylwerski. Wszystkie prawa zastrzeżone.</p>
             </div>
           </div>
         </div>
