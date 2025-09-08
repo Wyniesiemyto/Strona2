@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  AlertCircle
 } from 'lucide-react';
 
 function App() {
@@ -27,31 +28,73 @@ function App() {
     message: ''
   });
 
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      alert('Proszę podać imię i nazwisko');
+      return false;
+    }
+    if (!formData.phone.trim()) {
+      alert('Proszę podać numer telefonu');
+      return false;
+    }
+    if (!formData.message.trim()) {
+      alert('Proszę napisać wiadomość');
+      return false;
+    }
+    
+    // Basic phone validation
+    const phoneRegex = /^[+]?[\d\s\-()]{9,}$/;
+    if (!phoneRegex.test(formData.phone.trim())) {
+      alert('Proszę podać prawidłowy numer telefonu');
+      return false;
+    }
+    
+    return true;
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
     
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      // Wysyłanie przez Formspree
+      // Send via Formspree with enhanced data
       const response = await fetch('https://formspree.io/f/xdkogkvo', {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          subject: `🚚 Nowe zgłoszenie od ${formData.name} - WyniesiemyTo.pl`,
           name: formData.name,
           phone: formData.phone,
           message: formData.message,
-          _replyto: formData.name,
+          _replyto: `noreply@wyniesiemyto.pl`,
+          _subject: `🚚 Nowe zgłoszenie od ${formData.name}`,
+          _format: 'plain',
+          timestamp: new Date().toLocaleString('pl-PL', { 
+            timeZone: 'Europe/Warsaw' 
+          }),
         }),
       });
 
       if (response.ok) {
         setSubmitStatus('success');
         setFormData({ name: '', phone: '', message: '' });
+        
+        // Auto-hide success message after 8 seconds
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 8000);
       } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Formspree error:', errorData);
         setSubmitStatus('error');
       }
     } catch (error) {
@@ -319,16 +362,27 @@ function App() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Wyślij wiadomość</h3>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {submitStatus === 'success' && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3 animate-pulse">
                     <CheckCircle className="h-5 w-5 text-green-500" />
-                    <p className="text-green-700">Dziękujemy za wiadomość! Skontaktujemy się z Państwem wkrótce.</p>
+                    <div>
+                      <p className="text-green-700 font-semibold">✅ Wiadomość wysłana pomyślnie!</p>
+                      <p className="text-green-600 text-sm mt-1">
+                        Dziękujemy za kontakt. Oddzwonimy w ciągu 24 godzin lub wcześniej.
+                      </p>
+                    </div>
                   </div>
                 )}
                 
                 {submitStatus === 'error' && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
-                    <X className="h-5 w-5 text-red-500" />
-                    <p className="text-red-700">Wystąpił błąd podczas wysyłania wiadomości. Prosimy spróbować ponownie.</p>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                    <div>
+                      <p className="text-red-700 font-semibold">❌ Błąd wysyłania</p>
+                      <p className="text-red-600 text-sm mt-1">
+                        Spróbuj ponownie lub zadzwoń bezpośrednio: 
+                        <a href="tel:531124500" className="font-bold hover:underline ml-1">531 124 500</a>
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -340,10 +394,13 @@ function App() {
                     type="text"
                     id="name"
                     required
+                    minLength={2}
+                    maxLength={100}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
                     placeholder="Jak się do Ciebie zwracać?"
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
@@ -354,10 +411,13 @@ function App() {
                     type="tel"
                     id="phone"
                     required
+                    minLength={9}
+                    maxLength={20}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
-                    placeholder="Twój numer telefonu"
+                    placeholder="np. 531 124 500"
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
@@ -368,16 +428,22 @@ function App() {
                     id="message"
                     required
                     rows={5}
+                    minLength={10}
+                    maxLength={1000}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
-                    placeholder="Opisz czego potrzebujesz..."
+                    placeholder="Opisz czego potrzebujesz: przeprowadzka, wynoszenie mebli, wywóz śmieci..."
+                    disabled={isSubmitting}
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formData.message.length}/1000 znaków
+                  </p>
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2"
+                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2 transform hover:scale-105 disabled:hover:scale-100"
                 >
                   {isSubmitting ? (
                     <>
@@ -391,6 +457,10 @@ function App() {
                     </>
                   )}
                 </button>
+                <p className="text-xs text-gray-500 text-center">
+                  Lub zadzwoń bezpośrednio: 
+                  <a href="tel:531124500" className="text-orange-500 hover:underline font-semibold">531 124 500</a>
+                </p>
               </form>
             </div>
 
