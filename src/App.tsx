@@ -378,10 +378,6 @@ function App() {
                     <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                     <div>
                       <p className="text-red-700 font-semibold">❌ Błąd wysyłania</p>
-                      <p className="text-red-600 text-sm mt-1">
-                        Spróbuj ponownie lub zadzwoń bezpośrednio: 
-                        <a href="tel:531124500" className="font-bold hover:underline ml-1">531 124 500</a>
-                      </p>
                     </div>
                   </div>
                 )}
@@ -457,10 +453,6 @@ function App() {
                     </>
                   )}
                 </button>
-                <p className="text-xs text-gray-500 text-center">
-                  Lub zadzwoń bezpośrednio: 
-                  <a href="tel:531124500" className="text-orange-500 hover:underline font-semibold">531 124 500</a>
-                </p>
               </form>
             </div>
 
