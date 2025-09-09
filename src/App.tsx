@@ -51,6 +51,7 @@ function App() {
     
     return true;
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -378,6 +379,9 @@ function App() {
                     <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                     <div>
                       <p className="text-red-700 font-semibold">❌ Błąd wysyłania</p>
+                      <p className="text-red-600 text-sm mt-1">
+                        Spróbuj ponownie lub zadzwoń: <a href="tel:531124500" className="underline font-semibold">531 124 500</a>
+                      </p>
                     </div>
                   </div>
                 )}
