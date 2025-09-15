@@ -34,7 +34,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const recaptchaRef = useRef<HTMLDivElement>(null);
 
   // reCAPTCHA site key - replace with your actual site key
-  const RECAPTCHA_SITE_KEY = '6LceusorAAAAAEJsv6s4uTVSXmBj-XnpTMRfr8qP'; // This is a test key
+  const RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'; // This is a test key
 
   useEffect(() => {
     // Load reCAPTCHA
