@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, CheckCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+
+// Declare reCAPTCHA types
+declare global {
+  interface Window {
+    grecaptcha: {
+      render: (container: Element, parameters: {
+        sitekey: string;
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+      }) => void;
+      reset: () => void;
+    };
+  }
+}
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -12,11 +26,39 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    message: ''
+    message: '',
+    needsWasteCollection: ''
   });
+  
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<HTMLDivElement>(null);
+
+  // reCAPTCHA site key - replace with your actual site key
+  const RECAPTCHA_SITE_KEY = '6LceusorAAAAAEJsv6s4uTVSXmBj-XnpTMRfr8qP'; // This is a test key
+
+  useEffect(() => {
+    // Load reCAPTCHA
+    if (window.grecaptcha && recaptchaRef.current) {
+      window.grecaptcha.render(recaptchaRef.current, {
+        sitekey: RECAPTCHA_SITE_KEY,
+        callback: (token: string) => {
+          setRecaptchaToken(token);
+        },
+        'expired-callback': () => {
+          setRecaptchaToken(null);
+        }
+      });
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate reCAPTCHA
+    if (!recaptchaToken) {
+      setSubmitStatus('error');
+      return;
+    }
     
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -27,6 +69,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           name: formData.name,
           phone: formData.phone,
           message: formData.message,
+          needsWasteCollection: formData.needsWasteCollection,
+          recaptchaToken: recaptchaToken,
         },
       });
 
@@ -35,7 +79,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-        setFormData({ name: '', phone: '', message: '' });
+        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
+        setRecaptchaToken(null);
+        // Reset reCAPTCHA
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
         onSubmitSuccess?.();
       }
     } catch (error) {
@@ -107,6 +156,48 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
             placeholder="Opisz czego potrzebujesz..."
           />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Czy potrzebujesz wywozu do Punktu Selektywnej Zbiórki Odpadów Komunalnych? *
+          </label>
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="wasteCollection"
+                value="tak"
+                checked={formData.needsWasteCollection === 'tak'}
+                onChange={(e) => setFormData({ ...formData, needsWasteCollection: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">Tak</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="wasteCollection"
+                value="nie"
+                checked={formData.needsWasteCollection === 'nie'}
+                onChange={(e) => setFormData({ ...formData, needsWasteCollection: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">Nie</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Weryfikacja *
+          </label>
+          <div ref={recaptchaRef}></div>
+          {!recaptchaToken && (
+            <p className="text-red-600 text-sm mt-1">Proszę potwierdzić, że nie jesteś robotem</p>
+          )}
         </div>
         
         <button

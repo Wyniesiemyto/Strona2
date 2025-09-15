@@ -11,6 +11,8 @@ interface ContactFormData {
   name: string;
   phone: string;
   message: string;
+  needsWasteCollection: string;
+  recaptchaToken: string;
 }
 
 serve(async (req) => {
@@ -20,10 +22,10 @@ serve(async (req) => {
   }
 
   try {
-    const { name, phone, message }: ContactFormData = await req.json();
+    const { name, phone, message, needsWasteCollection, recaptchaToken }: ContactFormData = await req.json();
 
     // Validate required fields
-    if (!name || !phone || !message) {
+    if (!name || !phone || !message || !needsWasteCollection || !recaptchaToken) {
       return new Response(
         JSON.stringify({ error: "Wszystkie pola są wymagane" }),
         { 
@@ -33,9 +35,30 @@ serve(async (req) => {
       );
     }
 
+    // Verify reCAPTCHA
+    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `secret=${Deno.env.get('RECAPTCHA_SECRET_KEY')}&response=${recaptchaToken}`,
+    });
+
+    const recaptchaResult = await recaptchaResponse.json();
+    
+    if (!recaptchaResult.success) {
+      return new Response(
+        JSON.stringify({ error: "Weryfikacja reCAPTCHA nieudana. Proszę spróbować ponownie." }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
     // If RESEND_API_KEY is not set, we'll simulate success for now
     if (!RESEND_API_KEY) {
-      console.log("Email would be sent:", { name, phone, message });
+      console.log("Email would be sent:", { name, phone, message, needsWasteCollection });
       
       return new Response(
         JSON.stringify({ 
@@ -64,6 +87,7 @@ serve(async (req) => {
           <h2>Nowe zapytanie z formularza kontaktowego</h2>
           <p><strong>Imię i nazwisko:</strong> ${name}</p>
           <p><strong>Telefon:</strong> ${phone}</p>
+          <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
           <p><strong>Wiadomość:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
           <hr>
