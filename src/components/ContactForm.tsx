@@ -16,65 +16,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     needsWasteCollection: '',
     contactHours: ''
   });
-<<<<<<< HEAD
-=======
-  
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<HTMLDivElement>(null);
-
-  // reCAPTCHA site key
-  const RECAPTCHA_SITE_KEY = '6LeT188rAAAAAMMzi5YhjMAXQBq2r_aAVn9ux0JG';
-
-  useEffect(() => {
-    // Wait for reCAPTCHA to be ready
-    const initializeRecaptcha = () => {
-      const el = recaptchaRef.current;
-      if (!el || !window.grecaptcha) return;
-
-      try {
-        // Prefer Enterprise if available
-        const enterprise = (window.grecaptcha as any).enterprise;
-        if (enterprise && typeof enterprise.render === 'function') {
-          enterprise.render(el, {
-            sitekey: RECAPTCHA_SITE_KEY,
-            callback: (token: string) => setRecaptchaToken(token),
-            'expired-callback': () => setRecaptchaToken(null),
-          });
-          return;
-        }
-
-        // Standard v2
-        if (typeof window.grecaptcha.render === 'function') {
-          window.grecaptcha.render(el, {
-            sitekey: RECAPTCHA_SITE_KEY,
-            callback: (token: string) => setRecaptchaToken(token),
-            'expired-callback': () => setRecaptchaToken(null),
-          });
-          return;
-        }
-
-        // Not ready yet - retry shortly
-        setTimeout(initializeRecaptcha, 150);
-      } catch (error) {
-        console.error('reCAPTCHA render error:', error);
-      }
-    };
-
-    if (window.grecaptcha && window.grecaptcha.ready) {
-      window.grecaptcha.ready(initializeRecaptcha);
-    } else {
-      // Fallback: check if grecaptcha is loaded after a short delay
-      const checkRecaptcha = () => {
-        if (window.grecaptcha && window.grecaptcha.ready) {
-          window.grecaptcha.ready(initializeRecaptcha);
-        } else {
-          setTimeout(checkRecaptcha, 100);
-        }
-      };
-      checkRecaptcha();
-    }
-  }, []);
->>>>>>> 378f7d4e8970f18c85373dd7c52817a447c7b3d8
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,19 +39,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-<<<<<<< HEAD
         setFormData({ name: '', phone: '', message: '', needsWasteCollection: '', contactHours: '' });
-=======
-        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
-        setRecaptchaToken(null);
-        // Reset reCAPTCHA (Enterprise or standard)
-        const enterprise = (window.grecaptcha as any)?.enterprise;
-        if (enterprise && typeof enterprise.reset === 'function') {
-          enterprise.reset();
-        } else if (typeof window.grecaptcha.reset === 'function') {
-          window.grecaptcha.reset();
-        }
->>>>>>> 378f7d4e8970f18c85373dd7c52817a447c7b3d8
         onSubmitSuccess?.();
       }
     } catch (error) {

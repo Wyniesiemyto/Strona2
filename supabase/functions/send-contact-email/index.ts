@@ -26,21 +26,12 @@ serve(async (req) => {
     const body = await req.json();
     console.log("Received request body:", body);
     
-<<<<<<< HEAD
     const { name, phone, message, needsWasteCollection, contactHours }: ContactFormData = body;
 
     // Validate required fields
     console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
     
     if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
-=======
-    const { name, phone, message, needsWasteCollection, recaptchaToken }: ContactFormData = body;
-
-    // Validate required fields
-    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, recaptchaToken: !!recaptchaToken });
-    
-    if (!name || !phone || !message || !needsWasteCollection || !recaptchaToken) {
->>>>>>> 378f7d4e8970f18c85373dd7c52817a447c7b3d8
       console.log("Missing required fields");
       return new Response(
         JSON.stringify({ error: "Wszystkie pola są wymagane" }),
@@ -51,35 +42,6 @@ serve(async (req) => {
       );
     }
 
-<<<<<<< HEAD
-=======
-    // Verify reCAPTCHA
-    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${Deno.env.get('RECAPTCHA_SECRET_KEY')}&response=${recaptchaToken}`,
-    });
-
-    const recaptchaResult = await recaptchaResponse.json();
-    console.log("reCAPTCHA verify result:", recaptchaResult);
-    
-    if (!recaptchaResult.success) {
-      return new Response(
-        JSON.stringify({ 
-          error: "Weryfikacja reCAPTCHA nieudana. Proszę spróbować ponownie.",
-          codes: recaptchaResult["error-codes"] ?? [],
-          result: recaptchaResult,
-        }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-
->>>>>>> 378f7d4e8970f18c85373dd7c52817a447c7b3d8
     // If RESEND_API_KEY is not set, we'll simulate success for now
     if (!RESEND_API_KEY) {
       console.log("Email would be sent:", { name, phone, message, needsWasteCollection });
