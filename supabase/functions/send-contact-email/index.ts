@@ -5,6 +5,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 interface ContactFormData {
@@ -12,7 +13,7 @@ interface ContactFormData {
   phone: string;
   message: string;
   needsWasteCollection: string;
-  recaptchaToken: string;
+  contactHours: string;
 }
 
 serve(async (req) => {
@@ -22,33 +23,18 @@ serve(async (req) => {
   }
 
   try {
-    const { name, phone, message, needsWasteCollection, recaptchaToken }: ContactFormData = await req.json();
+    const body = await req.json();
+    console.log("Received request body:", body);
+    
+    const { name, phone, message, needsWasteCollection, contactHours }: ContactFormData = body;
 
     // Validate required fields
-    if (!name || !phone || !message || !needsWasteCollection || !recaptchaToken) {
+    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
+    
+    if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
+      console.log("Missing required fields");
       return new Response(
         JSON.stringify({ error: "Wszystkie pola są wymagane" }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-
-    // Verify reCAPTCHA
-    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${Deno.env.get('RECAPTCHA_SECRET_KEY')}&response=${recaptchaToken}`,
-    });
-
-    const recaptchaResult = await recaptchaResponse.json();
-    
-    if (!recaptchaResult.success) {
-      return new Response(
-        JSON.stringify({ error: "Weryfikacja reCAPTCHA nieudana. Proszę spróbować ponownie." }),
         { 
           status: 400, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -88,6 +74,7 @@ serve(async (req) => {
           <p><strong>Imię i nazwisko:</strong> ${name}</p>
           <p><strong>Telefon:</strong> ${phone}</p>
           <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
+          <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
           <p><strong>Wiadomość:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
           <hr>

@@ -1,21 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Mail, CheckCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-
-// Declare reCAPTCHA types
-declare global {
-  interface Window {
-    grecaptcha: {
-      render: (container: Element, parameters: {
-        sitekey: string;
-        callback: (token: string) => void;
-        'expired-callback': () => void;
-      }) => void;
-      reset: () => void;
-      ready: (callback: () => void) => void;
-    };
-  }
-}
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -28,63 +13,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     name: '',
     phone: '',
     message: '',
-    needsWasteCollection: ''
+    needsWasteCollection: '',
+    contactHours: ''
   });
-  
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<HTMLDivElement>(null);
-
-<<<<<<< HEAD
-  // reCAPTCHA site key
-  const RECAPTCHA_SITE_KEY = '6LeT188rAAAAAMMzi5YhjMAXQBq2r_aAVn9ux0JG';
-=======
-  // reCAPTCHA site key - replace with your actual site key
-  const RECAPTCHA_SITE_KEY = '6LceusorAAAAAEJsv6s4uTVSXmBj-XnpTMRfr8qP'; // This is a test key
->>>>>>> 172a5f6a3cfe96420cdaa4bb832a0ecd9eeee552
-
-  useEffect(() => {
-    // Wait for reCAPTCHA to be ready
-    const initializeRecaptcha = () => {
-      if (window.grecaptcha && window.grecaptcha.render && recaptchaRef.current) {
-        try {
-          window.grecaptcha.render(recaptchaRef.current, {
-            sitekey: RECAPTCHA_SITE_KEY,
-            callback: (token: string) => {
-              setRecaptchaToken(token);
-            },
-            'expired-callback': () => {
-              setRecaptchaToken(null);
-            }
-          });
-        } catch (error) {
-          console.error('reCAPTCHA render error:', error);
-        }
-      }
-    };
-
-    if (window.grecaptcha && window.grecaptcha.ready) {
-      window.grecaptcha.ready(initializeRecaptcha);
-    } else {
-      // Fallback: check if grecaptcha is loaded after a short delay
-      const checkRecaptcha = () => {
-        if (window.grecaptcha && window.grecaptcha.ready) {
-          window.grecaptcha.ready(initializeRecaptcha);
-        } else {
-          setTimeout(checkRecaptcha, 100);
-        }
-      };
-      checkRecaptcha();
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate reCAPTCHA
-    if (!recaptchaToken) {
-      setSubmitStatus('error');
-      return;
-    }
     
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -96,7 +30,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           phone: formData.phone,
           message: formData.message,
           needsWasteCollection: formData.needsWasteCollection,
-          recaptchaToken: recaptchaToken,
+          contactHours: formData.contactHours,
         },
       });
 
@@ -105,12 +39,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
-        setRecaptchaToken(null);
-        // Reset reCAPTCHA
-        if (window.grecaptcha) {
-          window.grecaptcha.reset();
-        }
+        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '', contactHours: '' });
         onSubmitSuccess?.();
       }
     } catch (error) {
@@ -217,14 +146,61 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Weryfikacja *
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            W jakich godzinach możemy się z panem/panią skontaktować? *
           </label>
-          <div ref={recaptchaRef}></div>
-          {!recaptchaToken && (
-            <p className="text-red-600 text-sm mt-1">Proszę potwierdzić, że nie jesteś robotem</p>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactHours"
+                value="8:00-12:00"
+                checked={formData.contactHours === '8:00-12:00'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">8:00 - 12:00</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactHours"
+                value="12:00-16:00"
+                checked={formData.contactHours === '12:00-16:00'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">12:00 - 16:00</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactHours"
+                value="16:00-20:00"
+                checked={formData.contactHours === '16:00-20:00'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">16:00 - 20:00</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer sm:col-span-3">
+              <input
+                type="radio"
+                name="contactHours"
+                value="dowolna"
+                checked={formData.contactHours === 'dowolna'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">Dowolna pora</span>
+            </label>
+          </div>
         </div>
+
         
         <button
           type="submit"
