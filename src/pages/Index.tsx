@@ -407,29 +407,21 @@ const Index = () => {
             
             <div>
   <h3 className="text-lg font-semibold mb-4">Dokumenty prawne</h3>
-  <div className="space-y-2">
-    <a 
-      href="/polityka-prywatnosci" 
-      className="text-gray-400 hover:text-orange-400 transition flex items-center gap-1"
-    >
-      <FileText size={16} />
+ <div className="text-center mt-4 pt-4 border-t border-gray-800">
+  <div className="flex justify-center space-x-6 text-xs">
+    <a href="/polityka-prywatnosci" className="text-gray-500 hover:text-orange-400">
       Polityka Prywatności
     </a>
-    <a 
-      href="/regulamin" 
-      className="text-gray-400 hover:text-orange-400 transition flex items-center gap-1"
-    >
-      <FileText size={16} />
+    <span className="text-gray-600">|</span>
+    <a href="/regulamin" className="text-gray-500 hover:text-orange-400">
       Regulamin
     </a>
-    <a 
-      href="/polityka-cookies" 
-      className="text-gray-400 hover:text-orange-400 transition flex items-center gap-1"
-    >
-      <FileText size={16} />
+    <span className="text-gray-600">|</span>
+    <a href="/polityka-cookies" className="text-gray-500 hover:text-orange-400">
       Polityka Cookies
     </a>
   </div>
+</div>
 </div>
           </div>
           
