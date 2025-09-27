@@ -48,7 +48,7 @@ const Index = () => {
               <button onClick={() => scrollToSection('why-us')} className="text-gray-700 hover:text-orange-600 transition">O nas</button>
               <button onClick={() => scrollToSection('reviews')} className="text-gray-700 hover:text-orange-600 transition">Opinie</button>
               <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-orange-600 transition">Kontakt</button>
-              <a href="tel:531124500" className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition font-medium">
+              <a href="tel:504729105" className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition font-medium">
                 Zadzwoń
               </a>
             </div>
@@ -99,9 +99,9 @@ const Index = () => {
             </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-  <a href="tel:531124500" className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+  <a href="tel:504729105" className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
     <Phone size={24} />
-    Zadzwoń teraz: 531 124 500
+    Zadzwoń teraz: 504 729 105
   </a>
   
   <button 
@@ -112,15 +112,7 @@ const Index = () => {
     <ArrowRight className="h-5 w-5" />
   </button>
 </div>
-            <button 
-                onClick={() => scrollToSection('contact')}
-                className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3"
-              >
-                Umów termin
-                <ArrowRight className="h-5 w-5" />
-              </button>
-            
-            
+
             <p className="text-gray-600 text-lg">
               Drugi numer: 798 598 993
             </p>
@@ -299,7 +291,7 @@ const Index = () => {
                     <div>
                       <p className="font-medium text-gray-900">Telefony</p>
                       <p className="text-gray-600">
-                        531 124 500
+                        504 729 105
                         <span className="mx-2">•</span>
                         798 598 993
                       </p>
@@ -310,8 +302,8 @@ const Index = () => {
                     <Mail className="h-5 w-5 text-orange-500" />
                     <div>
                       <p className="font-medium text-gray-900">Email</p>
-                      <a href="mailto:zagermannkacper@gmail.com" className="text-orange-600 hover:text-orange-700">
-                        zagermannkacper@gmail.com
+                      <a href="mailto:wyniesiemyto@gmail.com" className="text-orange-600 hover:text-orange-700">
+                        wyniesiemyto@gmail.com
                       </a>
                     </div>
                   </div>
@@ -369,7 +361,7 @@ const Index = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Kontakt</h3>
               <div className="space-y-2 text-gray-400">
-                <p>531 124 500</p>
+                <p>504 729 105</p>
                 <p>798 598 993</p>
                 <p>wyniesiemyto@gmail.com</p>
                 <p>Żory i okolice</p>
