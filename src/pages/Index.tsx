@@ -13,9 +13,12 @@ import {
   Star,
   Menu,
   X,
-  ArrowRight
+  ArrowRight,
+  FileText,
+  ExternalLink
 } from 'lucide-react';
 import { ContactForm } from '@/components/ContactForm';
+import CookieBanner from '@/components/CookieBanner';
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,146 +29,171 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
+      {/* Cookie Banner */}
+      <CookieBanner />
+      
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white shadow-lg z-50">
+      <nav className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Truck className="h-8 w-8 text-orange-500 mr-3" />
-              <span className="text-xl font-bold text-gray-900">WyniesiemyTo.pl</span>
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-2">
+              <Truck className="h-8 w-8 text-orange-500" />
+              <span className="text-2xl font-bold text-gray-900">WyniesiemyTo</span>
             </div>
             
-            {/* Desktop Menu */}
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-6">
-                <button onClick={() => scrollToSection('home')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Start</button>
-                <button onClick={() => scrollToSection('services')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Usługi</button>
-                <button onClick={() => scrollToSection('why-us')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Dlaczego my</button>
-                <button onClick={() => scrollToSection('reviews')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Opinie</button>
-                <button onClick={() => scrollToSection('contact')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Kontakt</button>
-                <a href="tel:504729105" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
-                  504 729 105
-                </a>
-              </div>
+            {/* Desktop menu */}
+            <div className="hidden md:flex items-center space-x-8">
+              <button onClick={() => scrollToSection('services')} className="text-gray-700 hover:text-orange-600 transition">Usługi</button>
+              <button onClick={() => scrollToSection('why-us')} className="text-gray-700 hover:text-orange-600 transition">O nas</button>
+              <button onClick={() => scrollToSection('reviews')} className="text-gray-700 hover:text-orange-600 transition">Opinie</button>
+              <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-orange-600 transition">Kontakt</button>
+              <a href="tel:531124500" className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition font-medium">
+                Zadzwoń
+              </a>
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-900 hover:text-orange-500 focus:outline-none"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
+            <button
+              className="md:hidden p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
-        </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg border-t">
-              <button onClick={() => scrollToSection('home')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Start</button>
-              <button onClick={() => scrollToSection('services')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Usługi</button>
-              <button onClick={() => scrollToSection('why-us')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Dlaczego my</button>
-              <button onClick={() => scrollToSection('reviews')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Opinie</button>
-              <button onClick={() => scrollToSection('contact')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Kontakt</button>
-              <a href="tel:504729105" className="block bg-orange-500 text-white px-3 py-2 text-base font-medium rounded mx-3 mt-2 text-center">
-                Zadzwoń: 504 729 105
-              </a>
+          {/* Mobile menu */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 border-t border-gray-200">
+              <div className="flex flex-col space-y-3">
+                <button onClick={() => scrollToSection('services')} className="text-gray-700 hover:text-orange-600 transition text-left">Usługi</button>
+                <button onClick={() => scrollToSection('why-us')} className="text-gray-700 hover:text-orange-600 transition text-left">O nas</button>
+                <button onClick={() => scrollToSection('reviews')} className="text-gray-700 hover:text-orange-600 transition text-left">Opinie</button>
+                <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-orange-600 transition text-left">Kontakt</button>
+                <a href="tel:531124500" className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition font-medium text-center">
+                  Zadzwoń
+                </a>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="pt-16 bg-gradient-to-br from-orange-50 via-white to-gray-50 min-h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative pt-16 pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-500 rounded-full mb-6">
-                <Truck className="h-10 w-10 text-white" />
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                <span className="text-orange-500">Wynosimy</span><br />
-                Twoje problemy!
-              </h1>
+              <Truck className="h-20 w-20 text-orange-500 mx-auto mb-4" />
             </div>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Profesjonalne usługi przeprowadzkowe, transport i wywóz w Żorach i okolicy. 
-              <br className="hidden md:block" />
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Wynosimy Twoje problemy!
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600 mb-4">
+              Profesjonalne usługi przeprowadzkowe, transport i wywóz w Żorach i okolicy.
+            </p>
+            <p className="text-lg md:text-xl font-semibold text-orange-600 mb-12">
               <strong>Szybko, uczciwie i w dobrej cenie.</strong>
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <a 
-                href="tel:504729105" 
+              <a
+                href="tel:531124500"
                 className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
-                <Phone className="h-6 w-6" />
-                Zadzwoń teraz: 504 729 105
+                <Phone size={24} />
+                Zadzwoń teraz: 531 124 500
               </a>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3"
-              >
-                Umów termin
-                <ArrowRight className="h-5 w-5" />
-              </button>
             </div>
             
-            <div className="text-gray-500 space-y-2">
-              <p>Drugi numer: <a href="tel:798598993" className="text-orange-500 hover:underline font-semibold">798 598 993</a></p>
-              <p className="text-sm">Właściciele: Kacper Zagermann / Patryk Sylwerski</p>
+            <p className="text-gray-600 text-lg">
+              Drugi numer: 798 598 993
+            </p>
+            
+            <p className="text-gray-700 text-lg mt-4">
+              <strong>Właściciele:</strong> Kacper Zagermann / Patryk Sylwerski
+            </p>
+            
+            {/* Company Data */}
+            <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl p-6 max-w-4xl mx-auto shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Dane firm</h3>
+              <div className="grid md:grid-cols-2 gap-6 text-sm">
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-orange-600 mb-2">Kacper Zagermann WyniesiemyTo</h4>
+                  <ul className="space-y-1 text-gray-700">
+                    <li><strong>NIP:</strong> 6511751354</li>
+                    <li><strong>REGON:</strong> 542555209</li>
+                    <li><strong>Adres:</strong> Osiedle Powstańców Śląskich 13B/17, 44-240 Żory</li>
+                    <li><strong>Telefon:</strong> 531 124 500</li>
+                    <li><strong>Email:</strong> zagermannkacper@gmail.com</li>
+                  </ul>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-orange-600 mb-2">WYNIESIEMYTO PATRYK SYLWERSKI</h4>
+                  <ul className="space-y-1 text-gray-700">
+                    <li><strong>NIP:</strong> 6511751360</li>
+                    <li><strong>REGON:</strong> 542558290</li>
+                    <li><strong>Adres:</strong> Osiedle Sikorskiego 34C/6, 44-240 Żory</li>
+                  </ul>
+                </div>
+              </div>
+              <p className="text-gray-600 text-xs mt-4">
+                <strong>Główna działalność:</strong> 38.11.Z - Zbieranie odpadów innych niż niebezpieczne
+              </p>
+              <p className="text-gray-600 text-xs">
+                Data rozpoczęcia działalności: 22 września 2025
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
+      <section id="services" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nasze Usługi</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Kompleksowa obsługa w zakresie przeprowadzek, transportu i porządkowania</p>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Kompleksowa obsługa w zakresie przeprowadzek, transportu i porządkowania
+            </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: <Home className="h-12 w-12" />,
+                icon: <Home className="h-12 w-12 text-orange-500" />,
                 title: "Wynoszenie mebli i rzeczy",
                 description: "Profesjonalne wynoszenie mebli, AGD i innych przedmiotów z każdego piętra. Bezpiecznie i szybko."
               },
               {
-                icon: <Truck className="h-12 w-12" />,
+                icon: <Truck className="h-12 w-12 text-orange-500" />,
                 title: "Przeprowadzki",
                 description: "Kompleksowe przeprowadzki mieszkań, domów i biur. Od pakowania po ustawienie w nowym miejscu."
               },
               {
-                icon: <Trash2 className="h-12 w-12" />,
+                icon: <Trash2 className="h-12 w-12 text-orange-500" />,
                 title: "Wywóz śmieci do PSZOK",
                 description: "Odbieramy i wieziemy odpady do Punktu Selektywnej Zbiórki Odpadów. All-inclusive."
               },
               {
-                icon: <Hammer className="h-12 w-12" />,
+                icon: <Hammer className="h-12 w-12 text-orange-500" />,
                 title: "Rozbiórki i opróżnianie",
                 description: "Profesjonalne rozbiórki i opróżnianie pomieszczeń. Zostawiamy przestrzeń gotową do remontu."
               },
               {
-                icon: <Clock className="h-12 w-12" />,
+                icon: <Clock className="h-12 w-12 text-orange-500" />,
                 title: "Ekspresowa obsługa",
                 description: "W nagłych przypadkach jesteśmy w stanie przyjechać tego samego dnia. Dzwonisz - jedziemy!"
               }
             ].map((service, index) => (
-              <div key={index} className="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition duration-300 hover:bg-orange-50 group">
-                <div className="text-orange-500 mb-4 group-hover:scale-110 transition duration-300">
+              <div key={index} className="bg-gradient-to-br from-orange-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
+                <div className="mb-6">
                   {service.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{service.title}</h3>
+                <p className="text-gray-600">{service.description}</p>
               </div>
             ))}
           </div>
@@ -173,59 +201,61 @@ const Index = () => {
       </section>
 
       {/* Why Us Section */}
-      <section id="why-us" className="py-20 bg-gradient-to-br from-gray-900 to-black text-white">
+      <section id="why-us" className="py-24 bg-gradient-to-br from-orange-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Dlaczego wybierają nas?</h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">To, co wyróżnia nas na rynku usług transportowych</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Dlaczego wybierają nas?</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              To, co wyróżnia nas na rynku usług transportowych
+            </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
             {[
               {
-                icon: <Shield className="h-16 w-16" />,
+                icon: <Shield className="h-12 w-12 text-orange-500" />,
                 title: "Uczciwa wycena",
                 description: "Bez ukrytych kosztów i dopłat. Cena ustalona na początku to cena końcowa. Słowo dajemy!"
               },
               {
-                icon: <Clock className="h-16 w-16" />,
+                icon: <Clock className="h-12 w-12 text-orange-500" />,
                 title: "Szybki czas reakcji",
                 description: "Odbieramy telefon, przyjeżdżamy punktualnie. W nagłych przypadkach - tego samego dnia."
               },
               {
-                icon: <Users className="h-16 w-16" />,
+                icon: <Users className="h-12 w-12 text-orange-500" />,
                 title: "Dojazd do klienta",
                 description: "Przyjeżdżamy na miejsce, oceniamy sytuację i przedstawiamy konkretną ofertę. Bez zobowiązań."
               }
             ].map((feature, index) => (
-              <div key={index} className="text-center group">
-                <div className="text-orange-500 mb-6 flex justify-center group-hover:scale-110 transition duration-300">
+              <div key={index} className="text-center bg-white p-8 rounded-2xl shadow-lg">
+                <div className="mb-6 flex justify-center">
                   {feature.icon}
                 </div>
-                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-                <p className="text-gray-300 text-lg leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
-          
-          <div className="mt-16 text-center">
-            <div className="bg-orange-500 p-8 rounded-xl inline-block max-w-2xl">
-              <h3 className="text-2xl font-bold mb-4">Nasze motto</h3>
-              <p className="text-xl italic">"Traktujemy każdą przeprowadzkę jak swoją własną. Jesteśmy tutaj, żeby pomóc - po sąsiedzku, uczciwie i profesjonalnie."</p>
-            </div>
+
+          <div className="text-center bg-white p-12 rounded-2xl shadow-xl">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">Nasze motto</h3>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              "Traktujemy każdą przeprowadzkę jak swoją własną. Jesteśmy tutaj, żeby pomóc - po sąsiedzku, uczciwie i profesjonalnie."
+            </p>
           </div>
         </div>
       </section>
 
       {/* Reviews Section */}
-      <section id="reviews" className="py-20 bg-gray-50">
+      <section id="reviews" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Co mówią nasi klienci</h2>
             <p className="text-xl text-gray-600">Opinie osób, które nam zaufały</p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 name: "Anna Młynek",
@@ -246,16 +276,16 @@ const Index = () => {
                 text: "Opróżnili cały strych w rekordowym czasie. Wszystko wynieśli, posprzątali i wywieźli niepotrzebne rzeczy do PSZOK. Super serwis!"
               }
             ].map((review, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition duration-300">
+              <div key={index} className="bg-gradient-to-br from-orange-50 to-white p-8 rounded-2xl shadow-lg">
                 <div className="flex mb-4">
                   {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-orange-500 fill-current" />
+                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-600 mb-6 italic leading-relaxed">"{review.text}"</p>
-                <div className="border-t pt-4">
-                  <p className="font-bold text-gray-900">{review.name}</p>
-                  <p className="text-gray-500">{review.location}</p>
+                <p className="text-gray-700 mb-6 italic">"{review.text}"</p>
+                <div>
+                  <p className="font-semibold text-gray-900">{review.name}</p>
+                  <p className="text-gray-600 text-sm">{review.location}</p>
                 </div>
               </div>
             ))}
@@ -264,45 +294,58 @@ const Index = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white">
+      <section id="contact" className="py-24 bg-gradient-to-br from-orange-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Skontaktuj się z nami</h2>
             <p className="text-xl text-gray-600">Zadzwoń lub napisz - odpowiemy szybko!</p>
           </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+          <div className="grid lg:grid-cols-2 gap-16">
             {/* Contact Form */}
             <ContactForm />
-
+            
             {/* Contact Info & Map */}
             <div className="space-y-8">
               {/* Contact Details */}
-              <div className="bg-orange-50 p-8 rounded-xl">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Dane kontaktowe</h3>
+              <div className="bg-white p-8 rounded-2xl shadow-lg">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">Dane kontaktowe</h3>
+                
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <Phone className="h-6 w-6 text-orange-500" />
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-5 w-5 text-orange-500" />
                     <div>
-                      <p className="font-semibold text-gray-900">Telefony</p>
+                      <p className="font-medium text-gray-900">Telefony</p>
                       <p className="text-gray-600">
-                        <a href="tel:504729105" className="hover:text-orange-500">504 729 105</a>
+                        531 124 500
                         <span className="mx-2">•</span>
-                        <a href="tel:798598993" className="hover:text-orange-500">798 598 993</a>
+                        798 598 993
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <MapPin className="h-6 w-6 text-orange-500" />
+                  
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-5 w-5 text-orange-500" />
                     <div>
-                      <p className="font-semibold text-gray-900">Lokalizacja</p>
+                      <p className="font-medium text-gray-900">Email</p>
+                      <a href="mailto:zagermannkacper@gmail.com" className="text-orange-600 hover:text-orange-700">
+                        zagermannkacper@gmail.com
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3">
+                    <MapPin className="h-5 w-5 text-orange-500" />
+                    <div>
+                      <p className="font-medium text-gray-900">Lokalizacja</p>
                       <p className="text-gray-600">Żory i okolice</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Users className="h-6 w-6 text-orange-500" />
+                  
+                  <div className="flex items-center space-x-3">
+                    <Users className="h-5 w-5 text-orange-500" />
                     <div>
-                      <p className="font-semibold text-gray-900">Właściciele</p>
+                      <p className="font-medium text-gray-900">Właściciele</p>
                       <p className="text-gray-600">Kacper Zagermann / Patryk Sylwerski</p>
                     </div>
                   </div>
@@ -310,12 +353,12 @@ const Index = () => {
               </div>
 
               {/* Google Maps */}
-              <div className="bg-gray-200 rounded-xl overflow-hidden h-64">
+              <div className="bg-white p-2 rounded-2xl shadow-lg">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d41325.89219986205!2d18.6266159!3d50.0472273!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4716f3c0c8fa1f75%3A0x4009e8c4b2c8b20e!2s44-240%20%C5%BBory!5e0!3m2!1spl!2spl!4v1635000000000!5m2!1spl!2spl"
                   width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
+                  height="300"
+                  style={{ border: 0, borderRadius: '12px' }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -330,40 +373,85 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <Truck className="h-8 w-8 text-orange-500 mr-3" />
-              <span className="text-2xl font-bold">WyniesiemyTo.pl</span>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Truck className="h-8 w-8 text-orange-500" />
+                <span className="text-2xl font-bold">WyniesiemyTo</span>
+              </div>
+              <p className="text-gray-400">
+                Profesjonalne usługi przeprowadzkowe i transportowe w Żorach i okolicy.
+              </p>
             </div>
-            <p className="text-xl text-orange-500 font-semibold mb-4">
-              "Wynosimy Twoje problemy!"
-            </p>
-            <p className="text-gray-400 mb-6">
-              Profesjonalne usługi transportowe w Żorach i okolicy
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <a href="tel:504729105" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
-                <Phone className="h-5 w-5" />
-                504 729 105
-              </a>
-              <a href="tel:798598993" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
-                <Phone className="h-5 w-5" />
-                798 598 993
-              </a>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-orange-500" />
-                Żory
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Kontakt</h3>
+              <div className="space-y-2 text-gray-400">
+                <p>531 124 500</p>
+                <p>798 598 993</p>
+                <p>zagermannkacper@gmail.com</p>
+                <p>Żory i okolice</p>
               </div>
             </div>
-            <div className="mt-8 pt-8 border-t border-gray-800 text-gray-400 text-sm">
-              <p>&copy; 2024 WyniesiemyTo.pl - Kacper Zagermann / Patryk Sylwerski. Wszystkie prawa zastrzeżone.</p>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Usługi</h3>
+              <div className="space-y-2 text-gray-400">
+                <p>Przeprowadzki</p>
+                <p>Wynoszenie mebli</p>
+                <p>Wywóz do PSZOK</p>
+                <p>Rozbiórki</p>
+                <p>Transport</p>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Dokumenty prawne</h3>
+              <div className="space-y-2">
+                <a 
+                  href="/polityka-prywatnosci" 
+                  className="text-gray-400 hover:text-orange-400 transition flex items-center gap-1"
+                >
+                  <FileText size={16} />
+                  Polityka Prywatności
+                </a>
+                <a 
+                  href="/regulamin" 
+                  className="text-gray-400 hover:text-orange-400 transition flex items-center gap-1"
+                >
+                  <FileText size={16} />
+                  Regulamin
+                </a>
+                <a 
+                  href="/polityka-cookies" 
+                  className="text-gray-400 hover:text-orange-400 transition flex items-center gap-1"
+                >
+                  <FileText size={16} />
+                  Polityka Cookies
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="text-gray-400 text-sm">
+                <p>© 2025 WyniesiemyTo. Wszystkie prawa zastrzeżone.</p>
+                <p className="mt-1">
+                  Kacper Zagermann WyniesiemyTo (NIP: 6511751354) • WYNIESIEMYTO PATRYK SYLWERSKI (NIP: 6511751360)
+                </p>
+              </div>
+              <div className="mt-4 md:mt-0">
+                <p className="text-gray-400 text-sm">
+                  Działalność: 38.11.Z - Zbieranie odpadów innych niż niebezpieczne
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </footer>
     </div>
   );
-
 };
 
 export default Index;
