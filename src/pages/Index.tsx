@@ -115,37 +115,6 @@ const Index = () => {
             <p className="text-gray-700 text-lg mt-4">
               <strong>Właściciele:</strong> Kacper Zagermann / Patryk Sylwerski
             </p>
-            
-            {/* Company Data */}
-            <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl p-6 max-w-4xl mx-auto shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Dane firm</h3>
-              <div className="grid md:grid-cols-2 gap-6 text-sm">
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-orange-600 mb-2">Kacper Zagermann WyniesiemyTo</h4>
-                  <ul className="space-y-1 text-gray-700">
-                    <li><strong>NIP:</strong> 6511751354</li>
-                    <li><strong>REGON:</strong> 542555209</li>
-                    <li><strong>Adres:</strong> Osiedle Powstańców Śląskich 13B/17, 44-240 Żory</li>
-                    <li><strong>Telefon:</strong> 531 124 500</li>
-                    <li><strong>Email:</strong> zagermannkacper@gmail.com</li>
-                  </ul>
-                </div>
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-orange-600 mb-2">WYNIESIEMYTO PATRYK SYLWERSKI</h4>
-                  <ul className="space-y-1 text-gray-700">
-                    <li><strong>NIP:</strong> 6511751360</li>
-                    <li><strong>REGON:</strong> 542558290</li>
-                    <li><strong>Adres:</strong> Osiedle Sikorskiego 34C/6, 44-240 Żory</li>
-                  </ul>
-                </div>
-              </div>
-              <p className="text-gray-600 text-xs mt-4">
-                <strong>Główna działalność:</strong> 38.11.Z - Zbieranie odpadów innych niż niebezpieczne
-              </p>
-              <p className="text-gray-600 text-xs">
-                Data rozpoczęcia działalności: 22 września 2025
-              </p>
-            </div>
           </div>
         </div>
       </section>
