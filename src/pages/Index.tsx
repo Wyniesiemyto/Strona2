@@ -389,7 +389,7 @@ const Index = () => {
               <div className="space-y-2 text-gray-400">
                 <p>531 124 500</p>
                 <p>798 598 993</p>
-                <p>zagermannkacper@gmail.com</p>
+                <p>wyniesiemyto@gmail.com</p>
                 <p>Żory i okolice</p>
               </div>
             </div>
@@ -436,15 +436,8 @@ const Index = () => {
           <div className="border-t border-gray-800 mt-8 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="text-gray-400 text-sm">
-                <p>© 2025 WyniesiemyTo. Wszystkie prawa zastrzeżone.</p>
-                <p className="mt-1">
-                  Kacper Zagermann WyniesiemyTo (NIP: 6511751354) • WYNIESIEMYTO PATRYK SYLWERSKI (NIP: 6511751360)
-                </p>
-              </div>
-              <div className="mt-4 md:mt-0">
-                <p className="text-gray-400 text-sm">
-                  Działalność: 38.11.Z - Zbieranie odpadów innych niż niebezpieczne
-                </p>
+                <p>© 2025 WyniesiemyTo. Wszystkie prawa zastrzeżone. Kacper Zagermann / Patryk Sylwerski</p>
+
               </div>
             </div>
           </div>
