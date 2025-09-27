@@ -98,15 +98,20 @@ const Index = () => {
               <strong>Szybko, uczciwie i w dobrej cenie.</strong>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <a
-                href="tel:531124500"
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
-              >
-                <Phone size={24} />
-                Zadzwoń teraz: 531 124 500
-              </a>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+  <a href="tel:531124500" className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+    <Phone size={24} />
+    Zadzwoń teraz: 531 124 500
+  </a>
+  
+  <button 
+    onClick={() => scrollToSection('contact')}
+    className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3"
+  >
+    Umów termin
+    <ArrowRight className="h-5 w-5" />
+  </button>
+</div>
             <button 
                 onClick={() => scrollToSection('contact')}
                 className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3"
