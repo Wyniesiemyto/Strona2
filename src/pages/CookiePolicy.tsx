@@ -180,15 +180,15 @@ const CookiePolicy = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-gray-900 mb-2">Chrome:</h4>
                   <ol className="text-sm space-y-1 list-decimal pl-4">
-                    <li>Menu > Ustawienia > Zaawansowane > Prywatność i bezpieczeństwo</li>
-                    <li>Ustawienia strony > Pliki cookie i dane stron</li>
+                    <li>Menu Ustawienia → Zaawansowane → Prywatność i bezpieczeństwo</li>
+                    <li>Ustawienia strony → Pliki cookie i dane stron</li>
                   </ol>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-gray-900 mb-2">Firefox:</h4>
                   <ol className="text-sm space-y-1 list-decimal pl-4">
-                    <li>Menu > Opcje > Prywatność i bezpieczeństwo</li>
+                    <li>Menu → Opcje → Prywatność i bezpieczeństwo</li>
                     <li>Pliki cookie i dane stron</li>
                   </ol>
                 </div>
@@ -196,7 +196,7 @@ const CookiePolicy = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-gray-900 mb-2">Safari:</h4>
                   <ol className="text-sm space-y-1 list-decimal pl-4">
-                    <li>Safari > Preferencje > Prywatność</li>
+                    <li>Safari → Preferencje → Prywatność</li>
                     <li>Zarządzaj danymi stron internetowych</li>
                   </ol>
                 </div>
@@ -204,7 +204,7 @@ const CookiePolicy = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-gray-900 mb-2">Edge:</h4>
                   <ol className="text-sm space-y-1 list-decimal pl-4">
-                    <li>Menu > Ustawienia > Pliki cookie i uprawnienia witryn</li>
+                    <li>Menu → Ustawienia → Pliki cookie i uprawnienia witryn</li>
                     <li>Zarządzaj plikami cookie i danymi witryn</li>
                   </ol>
                 </div>
