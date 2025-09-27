@@ -107,6 +107,14 @@ const Index = () => {
                 Zadzwoń teraz: 531 124 500
               </a>
             </div>
+            <button 
+                onClick={() => scrollToSection('contact')}
+                className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3"
+              >
+                Umów termin
+                <ArrowRight className="h-5 w-5" />
+              </button>
+            
             
             <p className="text-gray-600 text-lg">
               Drugi numer: 798 598 993
