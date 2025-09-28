@@ -99,7 +99,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
   return (
     <div className="bg-gray-50 p-8 rounded-xl">
       <h3 className="text-2xl font-bold text-gray-900 mb-6">Wyślij wiadomość</h3>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={e => { e.preventDefault(); handleSubmit(e); }} className="space-y-6">
         {submitStatus === 'success' && (
           <div className="bg-green-50 border border-green-200 p-4 flex items-center gap-3 rounded">
             <CheckCircle className="h-5 w-5 text-green-500" />
