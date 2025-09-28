@@ -22,42 +22,74 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
-    const body = await req.json();
-    console.log("Received request body:", body);
-    
-    const { name, phone, message, needsWasteCollection, contactHours, attachments }: ContactFormData = body;
 
-    // Validate required fields
-    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
-    
-    if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
-      console.log("Missing required fields");
-      return new Response(
-        JSON.stringify({ error: "Wszystkie pola są wymagane" }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
+  // 1. Parse JSON safely
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: "Nieprawidłowy format JSON" }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
+  console.log("Received request body:", body);
 
-    // If RESEND_API_KEY is not set, we'll simulate success for now
-    if (!RESEND_API_KEY) {
-      console.log("Email would be sent:", { name, phone, message, needsWasteCollection });
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Wiadomość została wysłana pomyślnie!" 
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-    
-    // Send email using Resend
+  // 2. Destructure payload
+  const {
+    name,
+    phone,
+    message,
+    needsWasteCollection,
+    contactHours,
+    attachments
+  }: ContactFormData = body;
+
+  // 3. Validate required fields
+  console.log("Validating fields:", {
+    name: !!name,
+    phone: !!phone,
+    message: !!message,
+    needsWasteCollection: !!needsWasteCollection,
+    contactHours: !!contactHours
+  });
+  if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
+    console.log("Missing required fields");
+    return new Response(
+      JSON.stringify({ error: "Wszystkie pola są wymagane" }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
+
+  // 4. Simulate or send email
+  if (!RESEND_API_KEY) {
+    console.log("Email would be sent:", {
+      name,
+      phone,
+      message,
+      needsWasteCollection,
+      attachments
+    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Wiadomość została wysłana pomyślnie!"
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
+
+  // 5. Send email using Resend
+  try {
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -65,8 +97,8 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "WyniesiemyTo <onboarding@resend.dev>", // Default Resend sender for testing
-        to: ["wyniesiemyto@gmail.com"], // Replace with your actual email
+        from: "WyniesiemyTo <onboarding@resend.dev>",
+        to: ["wyniesiemyto@gmail.com"],
         subject: `Nowe zapytanie od ${name}`,
         html: `
           <h2>Nowe zapytanie z formularza kontaktowego</h2>
@@ -76,47 +108,46 @@ serve(async (req) => {
           <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
           <p><strong>Wiadomość:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
-          ${attachments && attachments.length > 0 ? '<p><strong>Załączniki:</strong></p>' : ''}
-          ${attachments.map(url => `<p><a href="${url}" target="_blank">${url}</a></p>`).join('')}
+          ${
+            attachments && attachments.length > 0
+              ? '<p><strong>Załączniki:</strong></p>' +
+                attachments
+                  .map(
+                    (url) =>
+                      `<p><a href="${url}" target="_blank">${url}</a></p>`
+                  )
+                  .join("")
+              : ""
+          }
           <hr>
           <p><small>Wysłane z formularza na WyniesiemyTo.pl</small></p>
-        `,
+        `
       }),
-    });
-
+    );
     if (!emailResponse.ok) {
       throw new Error(`Failed to send email: ${emailResponse.statusText}`);
     }
-
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: "Wiadomość została wysłana pomyślnie!" 
+      JSON.stringify({
+        success: true,
+        message: "Wiadomość została wysłana pomyślnie!"
       }),
-      { 
+      {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
     );
-
   } catch (error) {
     console.error("Error sending email:", error);
-    
     return new Response(
-      JSON.stringify({ 
-        error: "Wystąpił błąd podczas wysyłania wiadomości. Prosimy spróbować ponownie lub zadzwonić bezpośrednio." 
+      JSON.stringify({
+        error:
+          "Wystąpił błąd podczas wysyłania wiadomości. Prosimy spróbować ponownie lub zadzwonić bezpośrednio."
       }),
-      { 
+      {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
-    );
-  }
-    } catch (error) {
-    console.error("❗ Edge Function error:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
