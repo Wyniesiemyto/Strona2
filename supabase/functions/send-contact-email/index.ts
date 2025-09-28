@@ -22,8 +22,6 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
-
-  try {
     const body = await req.json();
     console.log("Received request body:", body);
     
@@ -58,7 +56,7 @@ serve(async (req) => {
         }
       );
     }
-
+    
     // Send email using Resend
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -112,6 +110,13 @@ serve(async (req) => {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
+    );
+  }
+    } catch (error) {
+    console.error("❗ Edge Function error:", error);
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
