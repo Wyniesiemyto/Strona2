@@ -61,10 +61,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
       }
     }
 
-    try {
-      const { error } = await supabase.functions.invoke('send-contact-email', {
-        body: { ...formData, attachments: attachmentUrls }
-      });
+    const { error } = await supabase.functions.invoke('send-contact-email', {
+  body: JSON.stringify({ ...formData, attachments: attachmentUrls }),
+  headers: { 'Content-Type': 'application/json' }
+});
 
       if (error) {
         console.error(error);
