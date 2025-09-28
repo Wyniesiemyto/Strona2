@@ -72,7 +72,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
   }),
   headers: { 'Content-Type': 'application/json' }
 });
-
+ try {
       if (error) {
         console.error(error);
         setSubmitStatus('error');
