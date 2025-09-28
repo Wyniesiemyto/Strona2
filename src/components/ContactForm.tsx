@@ -99,7 +99,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
   return (
     <div className="bg-gray-50 p-8 rounded-xl">
       <h3 className="text-2xl font-bold text-gray-900 mb-6">Wyślij wiadomość</h3>
-      <form onSubmit={e => { e.preventDefault(); handleSubmit(e); }} className="space-y-6">
+      <div className="space-y-6">
         {submitStatus === 'success' && (
           <div className="bg-green-50 border border-green-200 p-4 flex items-center gap-3 rounded">
             <CheckCircle className="h-5 w-5 text-green-500" />
@@ -188,6 +188,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
         <button
           type="submit"
           disabled={isSubmitting}
+          onClick={handleSubmit}
           className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2"
         >
           {isSubmitting
@@ -195,7 +196,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
             : <Mail className="h-5 w-5" />}
           {isSubmitting ? 'Wysyłanie...' : 'Wyślij wiadomość'}
         </button>
-      </form>
+      </div>
     </div>
   );
 };
