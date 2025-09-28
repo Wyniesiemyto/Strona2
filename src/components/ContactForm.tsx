@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, CheckCircle, X } from 'lucide-react';
+import { Mail, CheckCircle, X, Paperclip } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ContactFormProps {
@@ -7,44 +7,85 @@ interface ContactFormProps {
 }
 
 export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    email: '',
+    address: '',
     message: '',
     needsWasteCollection: '',
     contactHours: ''
   });
+  const [consent, setConsent] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const selected = Array.from(e.target.files).slice(0, 5);
+    setFiles(selected);
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!consent) {
+      alert('Musisz wyrazić zgodę na przetwarzanie danych.');
+      return;
+    }
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    // Upload attachments
+    const attachmentUrls: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const ext = file.name.split('.').pop();
+      const fileName = `attach_${Date.now()}_${i}.${ext}`;
+      const { data: uploadData, error: uploadError } = await supabase
+        .storage
+        .from('attachments')
+        .upload(fileName, file);
+      if (!uploadError && uploadData) {
+        const { publicURL } = supabase
+          .storage
+          .from('attachments')
+          .getPublicUrl(uploadData.path);
+        attachmentUrls.push(publicURL);
+      } else {
+        console.error('Upload error:', uploadError);
+      }
+    }
+
     try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: {
-          name: formData.name,
-          phone: formData.phone,
-          message: formData.message,
-          needsWasteCollection: formData.needsWasteCollection,
-          contactHours: formData.contactHours,
-        },
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: { ...formData, attachments: attachmentUrls }
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
+        console.error(error);
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '', contactHours: '' });
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          address: '',
+          message: '',
+          needsWasteCollection: '',
+          contactHours: ''
+        });
+        setFiles([]);
+        setConsent(false);
         onSubmitSuccess?.();
       }
-    } catch (error) {
-      console.error('Network error:', error);
+    } catch (err) {
+      console.error(err);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -56,169 +97,130 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
       <h3 className="text-2xl font-bold text-gray-900 mb-6">Wyślij wiadomość</h3>
       <form onSubmit={handleSubmit} className="space-y-6">
         {submitStatus === 'success' && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="bg-green-50 border border-green-200 p-4 flex items-center gap-3 rounded">
             <CheckCircle className="h-5 w-5 text-green-500" />
-            <p className="text-green-700">Dziękujemy za wiadomość! Skontaktujemy się z Państwem wkrótce.</p>
+            <span className="text-green-700">Dziękujemy! Skontaktujemy się wkrótce.</span>
           </div>
         )}
-        
         {submitStatus === 'error' && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="bg-red-50 border border-red-200 p-4 flex items-center gap-3 rounded">
             <X className="h-5 w-5 text-red-500" />
-            <p className="text-red-700">Wystąpił błąd podczas wysyłania wiadomości. Prosimy spróbować ponownie lub zadzwonić bezpośrednio.</p>
+            <span className="text-red-700">Błąd wysyłki. Spróbuj ponownie lub zadzwoń.</span>
           </div>
         )}
 
+        {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-            Imię i nazwisko *
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Imię i nazwisko *</label>
           <input
             type="text"
-            id="name"
             required
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
-            placeholder="Jak się do Ciebie zwracać?"
+            onChange={e => handleChange('name', e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
           />
         </div>
-        
+
+        {/* Phone */}
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-            Numer telefonu *
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
           <input
             type="tel"
-            id="phone"
             required
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
-            placeholder="Twój numer telefonu"
+            onChange={e => handleChange('phone', e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
           />
         </div>
-        
+
+        {/* Email */}
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-            Wiadomość *
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={e => handleChange('email', e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
+          />
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Adres</label>
+          <input
+            type="text"
+            value={formData.address}
+            onChange={e => handleChange('address', e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
+          />
+        </div>
+
+        {/* Message with paperclip icon */}
+        <div className="relative">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Wiadomość *</label>
           <textarea
-            id="message"
             required
-            rows={5}
+            maxLength={230}
+            rows={6}
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
-            placeholder="Opisz czego potrzebujesz..."
+            onChange={e => handleChange('message', e.target.value)}
+            className="w-full px-4 py-3 pr-10 border rounded-lg focus:ring-orange-500"
+            placeholder="Opisz, czego potrzebujesz..."
           />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Czy potrzebujesz wywozu do Punktu Selektywnej Zbiórki Odpadów Komunalnych? *
-          </label>
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="wasteCollection"
-                value="tak"
-                checked={formData.needsWasteCollection === 'tak'}
-                onChange={(e) => setFormData({ ...formData, needsWasteCollection: e.target.value })}
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                required
-              />
-              <span className="text-sm text-gray-700">Tak</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="wasteCollection"
-                value="nie"
-                checked={formData.needsWasteCollection === 'nie'}
-                onChange={(e) => setFormData({ ...formData, needsWasteCollection: e.target.value })}
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                required
-              />
-              <span className="text-sm text-gray-700">Nie</span>
-            </label>
-          </div>
+          <button
+            type="button"
+            onClick={() => document.getElementById('attachment')?.click()}
+            className="absolute top-10 right-3 text-gray-400 hover:text-orange-500 transition"
+            aria-label="Dodaj załącznik"
+          >
+            <Paperclip className="h-5 w-5" />
+          </button>
+          <p className="text-xs text-gray-500 mt-1">
+            {formData.message.length}/230 znaków
+          </p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            W jakich godzinach możemy się z panem/panią skontaktować? *
+        {/* Hidden file input */}
+        <input
+          type="file"
+          id="attachment"
+          multiple
+          accept=".jpg,.png,.pdf"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        {files.length > 0 && (
+          <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
+            {files.map((f, i) => (
+              <li key={i}>{f.name}</li>
+            ))}
+          </ul>
+        )}
+
+        {/* RODO consent */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={e => setConsent(e.target.checked)}
+            required
+            className="h-4 w-4 text-orange-500 border-gray-300"
+          />
+          <label className="text-sm text-gray-700">
+            Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z Polityką Prywatności.
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="contactHours"
-                value="8:00-12:00"
-                checked={formData.contactHours === '8:00-12:00'}
-                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                required
-              />
-              <span className="text-sm text-gray-700">8:00 - 12:00</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="contactHours"
-                value="12:00-16:00"
-                checked={formData.contactHours === '12:00-16:00'}
-                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                required
-              />
-              <span className="text-sm text-gray-700">12:00 - 16:00</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="contactHours"
-                value="16:00-20:00"
-                checked={formData.contactHours === '16:00-20:00'}
-                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                required
-              />
-              <span className="text-sm text-gray-700">16:00 - 20:00</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer sm:col-span-3">
-              <input
-                type="radio"
-                name="contactHours"
-                value="dowolna"
-                checked={formData.contactHours === 'dowolna'}
-                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-                required
-              />
-              <span className="text-sm text-gray-700">Dowolna pora</span>
-            </label>
-          </div>
         </div>
 
-        
+        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2"
+          className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2"
         >
-          {isSubmitting ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Wysyłanie...
-            </>
-          ) : (
-            <>
-              <Mail className="h-5 w-5" />
-              Wyślij wiadomość
-            </>
-          )}
+          {isSubmitting
+            ? <div className="animate-spin h-5 w-5 border-b-2 border-white rounded-full" />
+            : <Mail className="h-5 w-5" />}
+          {isSubmitting ? 'Wysyłanie...' : 'Wyślij wiadomość'}
         </button>
       </form>
     </div>
