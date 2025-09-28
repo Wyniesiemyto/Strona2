@@ -186,7 +186,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
         </div>
 
         <button
-          type="submit"
+          type="button"
           disabled={isSubmitting}
           onClick={handleSubmit}
           className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white font-bold py-4 rounded-lg flex items-center justify-center gap-2"
