@@ -14,6 +14,7 @@ interface ContactFormData {
   message: string;
   needsWasteCollection: string;
   contactHours: string;
+  attachments: string[];
 }
 
 serve(async (req) => {
@@ -26,7 +27,7 @@ serve(async (req) => {
     const body = await req.json();
     console.log("Received request body:", body);
     
-    const { name, phone, message, needsWasteCollection, contactHours }: ContactFormData = body;
+    const { name, phone, message, needsWasteCollection, contactHours, attachments }: ContactFormData = body;
 
     // Validate required fields
     console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
@@ -77,6 +78,8 @@ serve(async (req) => {
           <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
           <p><strong>Wiadomość:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
+          ${attachments && attachments.length > 0 ? '<p><strong>Załączniki:</strong></p>' : ''}
+          ${attachments.map(url => `<p><a href="${url}" target="_blank">${url}</a></p>`).join('')}
           <hr>
           <p><small>Wysłane z formularza na WyniesiemyTo.pl</small></p>
         `,
