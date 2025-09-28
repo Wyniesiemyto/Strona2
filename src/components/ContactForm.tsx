@@ -30,7 +30,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     if (!consent) {
       alert('Musisz wyrazić zgodę na przetwarzanie danych.');
       return;
@@ -38,26 +37,26 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
-    // // Upload attachments
-    // const attachmentUrls: string[] = [];
-    // for (let i = 0; i < files.length; i++) {
-    //   const file = files[i];
-    //   const ext = file.name.split('.').pop();
-    //   const fileName = `attach_${Date.now()}_${i}.${ext}`;
-    //   const { data: uploadData, error: uploadError } = await supabase
-    //     .storage
-    //     .from('attachments')
-    //     .upload(fileName, file);
-    //   if (!uploadError && uploadData) {
-    //     const { data: { publicUrl } } = supabase
-    //       .storage
-    //       .from('attachments')
-    //       .getPublicUrl(uploadData.path);
-    //     attachmentUrls.push(publicUrl);
-    //   } else {
-    //     console.error('Upload error:', uploadError);
-    //   }
-    // }
+     // Upload attachments
+     const attachmentUrls: string[] = [];
+     for (let i = 0; i < files.length; i++) {
+       const file = files[i];
+     const ext = file.name.split('.').pop();
+       const fileName = `attach_${Date.now()}_${i}.${ext}`;
+       const { data: uploadData, error: uploadError } = await supabase
+         .storage
+         .from('attachments')
+         .upload(fileName, file);
+       if (!uploadError && uploadData) {
+         const { data: { publicUrl } } = supabase
+           .storage
+           .from('attachments')
+           .getPublicUrl(uploadData.path);
+         attachmentUrls.push(publicUrl);
+       } else {
+         console.error('Upload error:', uploadError);
+       }
+     }
 
 // const { error } = await supabase.functions.invoke('send-contact-email', {
 //   body: JSON.stringify({
@@ -147,7 +146,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
           />
         </div>
         //
-        {/* <div className="relative">
+         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">Wiadomość *</label>
           <textarea
           
@@ -184,7 +183,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
               <li key={i}>{f.name}</li>
             ))}
           </ul>
-        )} */}
+        )}
 
         <div className="flex items-center gap-2">
           <input
