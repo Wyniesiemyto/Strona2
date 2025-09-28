@@ -27,7 +27,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     setFiles(selected);
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -51,20 +51,21 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         .from('attachments')
         .upload(fileName, file);
       if (!uploadError && uploadData) {
-        const { publicURL } = supabase
+        const { data: { publicUrl } } = supabase
           .storage
           .from('attachments')
           .getPublicUrl(uploadData.path);
-        attachmentUrls.push(publicURL);
+        attachmentUrls.push(publicUrl);
       } else {
         console.error('Upload error:', uploadError);
       }
     }
 
-    const { error } = await supabase.functions.invoke('send-contact-email', {
-  body: JSON.stringify({ ...formData, attachments: attachmentUrls }),
-  headers: { 'Content-Type': 'application/json' }
-});
+    try {
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: JSON.stringify({ ...formData, attachments: attachmentUrls }),
+        headers: { 'Content-Type': 'application/json' }
+      });
 
       if (error) {
         console.error(error);
@@ -109,7 +110,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           </div>
         )}
 
-        {/* Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Imię i nazwisko *</label>
           <input
@@ -121,7 +121,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           />
         </div>
 
-        {/* Phone */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
           <input
@@ -133,7 +132,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           />
         </div>
 
-        {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input
@@ -144,7 +142,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           />
         </div>
 
-        {/* Address */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Adres</label>
           <input
@@ -155,7 +152,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           />
         </div>
 
-        {/* Message with paperclip icon */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">Wiadomość *</label>
           <textarea
@@ -175,12 +171,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           >
             <Paperclip className="h-5 w-5" />
           </button>
-          <p className="text-xs text-gray-500 mt-1">
-            {formData.message.length}/230 znaków
-          </p>
+          <p className="text-xs text-gray-500 mt-1">{formData.message.length}/230 znaków</p>
         </div>
 
-        {/* Hidden file input */}
         <input
           type="file"
           id="attachment"
@@ -197,7 +190,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           </ul>
         )}
 
-        {/* RODO consent */}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -211,7 +203,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           </label>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting}
