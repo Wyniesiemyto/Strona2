@@ -13,8 +13,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    email: '',
-    address: '',
     message: '',
     needsWasteCollection: '',
     contactHours: ''
@@ -61,17 +59,17 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
       }
     }
 
-const { error } = await supabase.functions.invoke('send-contact-email', {
-  body: JSON.stringify({
-    name: formData.name,
-    phone: formData.phone,
-    message: formData.message,
-    needsWasteCollection: formData.needsWasteCollection,
-    contactHours: formData.contactHours,
-    attachments: attachmentUrls
-  }),
-  headers: { 'Content-Type': 'application/json' }
-});
+    const { error } = await supabase.functions.invoke('send-contact-email', {
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        message: formData.message,
+        needsWasteCollection: formData.needsWasteCollection,
+        contactHours: formData.contactHours,
+        attachments: attachmentUrls
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
 
  try {
       if (error) {
@@ -82,8 +80,6 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
         setFormData({
           name: '',
           phone: '',
-          email: '',
-          address: '',
           message: '',
           needsWasteCollection: '',
           contactHours: ''
@@ -138,27 +134,6 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
             className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
           />
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={e => handleChange('email', e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Adres</label>
-          <input
-            type="text"
-            value={formData.address}
-            onChange={e => handleChange('address', e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
-          />
-        </div>
-
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">Wiadomość *</label>
           <textarea
