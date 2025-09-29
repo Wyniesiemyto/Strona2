@@ -29,34 +29,32 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    if (!consent) {
-      alert('Musisz wyrazić zgodę na przetwarzanie danych.');
-      return;
-    }
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!consent) return alert('Musisz wyrazić zgodę.');
 
-     // Upload attachments
-     const attachmentUrls: string[] = [];
-     for (let i = 0; i < files.length; i++) {
-       const file = files[i];
-     const ext = file.name.split('.').pop();
-       const fileName = `attach_${Date.now()}_${i}.${ext}`;
-       const { data: uploadData, error: uploadError } = await supabase
-         .storage
-         .from('attachments')
-         .upload(fileName, file);
-       if (!uploadError && uploadData) {
-         const { data: { publicUrl } } = supabase
-           .storage
-           .from('attachments')
-           .getPublicUrl(uploadData.path);
-         attachmentUrls.push(publicUrl);
-       } else {
-         console.error('Upload error:', uploadError);
-       }
-     }
+  setIsSubmitting(true);
+  setSubmitStatus('idle');
+
+  // Upload attachments
+const attachmentUrls: string[] = [];
+for (let i = 0; i < files.length; i++) {
+  const file = files[i];
+  const ext = file.name.split('.').pop();
+  const fileName = `attachments/attach_${Date.now()}_${i}.${ext}`;
+  const { data, error: uploadError } = await supabase
+    .storage
+    .from('attachments')
+    .upload(fileName, file);
+
+  if (uploadError) {
+    console.error('Upload error:', uploadError);
+  } else if (data) {
+    const urlResponse = supabase.storage.from('attachments').getPublicUrl(data.path);
+    const publicUrl = urlResponse.data?.publicUrl || '';
+    attachmentUrls.push(publicUrl);
+  }
+}
 
 // const { error } = await supabase.functions.invoke('send-contact-email', {
 //   body: JSON.stringify({
@@ -77,10 +75,10 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
     message: formData.message,
     needsWasteCollection: formData.needsWasteCollection,
     contactHours: formData.contactHours,
-    attachments: []  // bez FormData
+    attachments: attachmentUrls // <- tu URL-e z Supabase Storage
   }),
   headers: { 'Content-Type': 'application/json' }
- });
+});
 
  try {
       if (error) {
