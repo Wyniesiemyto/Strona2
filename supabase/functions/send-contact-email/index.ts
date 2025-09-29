@@ -69,8 +69,8 @@ serve(async (req: Request) => {
   const name = body.name;
   const phone = body.phone;
   const message = body.message;
-  const needsWasteCollection = body.needsWasteCollection;
-  const contactHours = body.contactHours;
+  const needsWasteCollection = body.needsWasteCollection || "nie określono";
+  const contactHours = body.contactHours || "dowolne";
   const attachments = body.attachments || [];
 
   console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
@@ -83,8 +83,7 @@ if (!name || !phone || !message) {
 }
 
 // I ustaw domyślne wartości:
-const needsWasteCollection = body.needsWasteCollection || "nie określono";
-const contactHours = body.contactHours || "dowolne";
+
 
   // --- dry-run if no API key
   if (!RESEND_API_KEY) {
