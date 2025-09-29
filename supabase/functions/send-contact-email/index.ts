@@ -3,7 +3,6 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
-// Jeśli w produkcji chcesz ograniczyć origin -> ustaw zamiast "*"
 const corsHeadersBase = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -11,32 +10,26 @@ const corsHeadersBase = {
   "Content-Type": "application/json",
 };
 
-interface ContactFormData {
-  name: string;
-  phone: string;
-  message: string;
-  needsWasteCollection: string;
-  contactHours: string;
-  attachments?: string[];
-}
-
 serve(async (req: Request) => {
-  // Preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeadersBase });
   }
 
-  // 1) Parsowanie body: spróbuj JSON, a jeśli nie - formData
-  let body: any = {};
-  const contentType = req.headers.get("content-type") || "";
-
+  // --- LOG: headers for debugging
   try {
-    if (contentType.includes("application/json")) {
-      body = await req.json();
-    } else if (contentType.includes("multipart/form-data") || contentType.includes("application/x-www-form-urlencoded")) {
+    console.log("Request headers:", Object.fromEntries(req.headers.entries()));
+  } catch (e) {
+    console.log("Failed to log headers:", e);
+  }
+
+  const contentType = (req.headers.get("content-type") || "").toLowerCase();
+
+  // --- robust body parsing
+  let body: any = {};
+  try {
+    if (contentType.includes("multipart/form-data") || contentType.includes("application/x-www-form-urlencoded")) {
       const fd = await req.formData();
       fd.forEach((v, k) => {
-        // uwzględnij pola powtarzalne (attachments)
         if (k === "attachments") {
           if (!body.attachments) body.attachments = [];
           body.attachments.push(String(v));
@@ -44,91 +37,79 @@ serve(async (req: Request) => {
           body[k] = String(v);
         }
       });
+      console.log("Parsed formData body:", body);
     } else {
-      // fallback: spróbuj json, a jeśli nie to pusty obiekt
-      try {
-        body = await req.json();
-      } catch {
+      // read raw text first (always safe)
+      const raw = await req.text();
+      console.log("Raw body length:", raw ? raw.length : 0);
+      // log first ~2000 chars only to avoid huge logs
+      console.log("Raw body snippet:", raw ? raw.slice(0, 2000) : "");
+      if (raw && raw.trim().length > 0) {
+        try {
+          body = JSON.parse(raw);
+          console.log("Parsed JSON body:", body);
+        } catch (e) {
+          console.warn("Failed to parse body as JSON:", e);
+          // keep raw in body for debugging
+          body = { rawBody: raw };
+        }
+      } else {
         body = {};
       }
     }
   } catch (err) {
-    console.error("Error parsing request body:", err);
-    return new Response(
-      JSON.stringify({ error: "Nieprawidłowy format żądania" }),
-      { status: 400, headers: corsHeadersBase }
-    );
+    console.error("Error while parsing request body:", err);
+    return new Response(JSON.stringify({ error: "Nieprawidłowy format żądania" }), {
+      status: 400,
+      headers: corsHeadersBase,
+    });
   }
 
-  console.log("Received request body:", body);
+  // --- validation
+  const name = body.name;
+  const phone = body.phone;
+  const message = body.message;
+  const needsWasteCollection = body.needsWasteCollection;
+  const contactHours = body.contactHours;
+  const attachments = body.attachments || [];
 
-  // 2) Walidacja
-  const {
-    name,
-    phone,
-    message,
-    needsWasteCollection,
-    contactHours,
-    attachments
-  }: ContactFormData = body;
-
-  console.log("Validating fields:", {
-    name: !!name,
-    phone: !!phone,
-    message: !!message,
-    needsWasteCollection: !!needsWasteCollection,
-    contactHours: !!contactHours
-  });
+  console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
 
   if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
-    console.log("Missing required fields");
-    return new Response(
-      JSON.stringify({ error: "Wszystkie pola są wymagane" }),
-      { status: 400, headers: corsHeadersBase }
-    );
-  }
-
-  // 3) Jeśli brak klucza - tylko logujemy i zwracamy success (lokalny tryb)
-  if (!RESEND_API_KEY) {
-    console.log("RESEND_API_KEY missing — running in dry-run mode. Email would be:", {
-      name,
-      phone,
-      message,
-      needsWasteCollection,
-      contactHours,
-      attachments
+    return new Response(JSON.stringify({ error: "Wszystkie pola są wymagane" }), {
+      status: 400,
+      headers: corsHeadersBase,
     });
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: "Wiadomość została wysłana (tryb testowy, brak RESEND_API_KEY)."
-      }),
-      { status: 200, headers: corsHeadersBase }
-    );
   }
 
-  // 4) Wyślij email do Resend — bezpieczne czytanie odpowiedzi
+  // --- dry-run if no API key
+  if (!RESEND_API_KEY) {
+    console.log("RESEND_API_KEY missing — DRY RUN. Payload:", { name, phone, message, needsWasteCollection, contactHours, attachments });
+    return new Response(JSON.stringify({ success: true, message: "Wiadomość (dry-run)" }), {
+      status: 200,
+      headers: corsHeadersBase,
+    });
+  }
+
+  // --- send to Resend
   try {
     const payload = {
       from: "WyniesiemyTo <onboarding@resend.dev>",
       to: ["wyniesiemyto@gmail.com"],
       subject: `Nowe zapytanie od ${name}`,
       html: `
-        <h2>Nowe zapytanie z formularza kontaktowego</h2>
-        <p><strong>Imię i nazwisko:</strong> ${name}</p>
+        <h2>Nowe zapytanie z formularza</h2>
+        <p><strong>Imię:</strong> ${name}</p>
         <p><strong>Telefon:</strong> ${phone}</p>
         <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
         <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
         <p><strong>Wiadomość:</strong></p>
-        <p>${String(message).replace(/\n/g, '<br>')}</p>
+        <p>${String(message).replace(/\n/g, "<br>")}</p>
         ${
-          attachments && attachments.length > 0
-            ? '<p><strong>Załączniki:</strong></p>' +
-              attachments.map((url: string) => `<p><a href="${url}" target="_blank">${url}</a></p>`).join("")
+          attachments && attachments.length
+            ? '<p><strong>Załączniki:</strong></p>' + attachments.map((u: string) => `<p><a href="${u}">${u}</a></p>`).join("")
             : ""
         }
-        <hr>
-        <p><small>Wysłane z formularza na WyniesiemyTo.pl</small></p>
       `
     };
 
@@ -141,47 +122,35 @@ serve(async (req: Request) => {
       body: JSON.stringify(payload),
     });
 
-    // Bezpieczne czytanie body — text() zamiast json()
     const respText = await emailResponse.text();
     let respBody: any = null;
     if (respText && respText.length > 0) {
       try {
         respBody = JSON.parse(respText);
       } catch {
-        respBody = respText; // zostaw surowy tekst
+        respBody = respText;
       }
     }
 
     console.log("Resend response:", { status: emailResponse.status, body: respBody });
 
     if (!emailResponse.ok) {
-      // logujemy i zwracamy czytelny błąd (możesz usunąć respBody z produkcji)
-      console.error("Failed to send email via Resend:", { status: emailResponse.status, body: respBody });
-      return new Response(
-        JSON.stringify({
-          error: "Wystąpił błąd podczas wysyłania wiadomości (provider).",
-          providerStatus: emailResponse.status,
-          providerBody: respBody,
-        }),
-        { status: 500, headers: corsHeadersBase }
-      );
+      console.error("Provider error:", { status: emailResponse.status, body: respBody });
+      return new Response(JSON.stringify({ error: "Provider error", providerStatus: emailResponse.status, providerBody: respBody }), {
+        status: 500,
+        headers: corsHeadersBase,
+      });
     }
 
-    // success
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: "Wiadomość została wysłana pomyślnie!"
-      }),
-      { status: 200, headers: corsHeadersBase }
-    );
-  } catch (error) {
-    console.error("Error sending email:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Wystąpił błąd podczas wysyłania wiadomości. Prosimy spróbować ponownie lub zadzwonić bezpośrednio."
-      }),
-      { status: 500, headers: corsHeadersBase }
-    );
+    return new Response(JSON.stringify({ success: true, message: "Wiadomość wysłana" }), {
+      status: 200,
+      headers: corsHeadersBase,
+    });
+  } catch (err) {
+    console.error("Error sending email (catch):", err);
+    return new Response(JSON.stringify({ error: "Wystąpił błąd podczas wysyłania wiadomości." }), {
+      status: 500,
+      headers: corsHeadersBase,
+    });
   }
 });
