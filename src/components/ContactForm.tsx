@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle, X, Paperclip } from 'lucide-react';
-import { supabase as supabaseClient } from '@/integrations/supabase/client';
-import { createClient } from '@supabase/supabase-js';
+import { supabase  } from '@/integrations/supabase/client';
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-)
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -74,16 +69,7 @@ for (let i = 0; i < files.length; i++) {
 //   headers: { 'Content-Type': 'application/json' }
 // });
 
-const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-contact-email`;
-const headers = {
-  'Content-Type': 'application/json',
-  apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-  authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-};
-
-const response = await fetch(url, {
-  method: 'POST',
-  headers,
+const { error } = await supabase.functions.invoke('send-contact-email', {
   body: JSON.stringify({
     name: formData.name,
     phone: formData.phone,
@@ -91,11 +77,11 @@ const response = await fetch(url, {
     needsWasteCollection: formData.needsWasteCollection || 'nie określono',
     contactHours: formData.contactHours || 'dowolne',
     attachments: attachmentUrls
-  })
+  }),
+  headers: { 'Content-Type': 'application/json' }
 });
-
-if (!response.ok) {
-  console.error('Edge Function error:', await response.json());
+if (error) {
+  console.error(error);
   setSubmitStatus('error');
 } else {
   setSubmitStatus('success');
