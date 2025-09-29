@@ -4,8 +4,8 @@ import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
 interface ContactFormProps {
@@ -74,11 +74,11 @@ for (let i = 0; i < files.length; i++) {
 //   headers: { 'Content-Type': 'application/json' }
 // });
 
-const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contact-email`;
+const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-contact-email`;
 const headers = {
   'Content-Type': 'application/json',
-  apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`
+  apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
 };
 
 const response = await fetch(url, {
