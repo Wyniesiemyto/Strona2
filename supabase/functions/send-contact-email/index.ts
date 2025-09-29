@@ -18,7 +18,7 @@ serve(async (req: Request) => {
   // --- LOG: headers for debugging
   try {
     console.log("Request headers:", Object.fromEntries(req.headers.entries()));
-  } catch (e) {
+  } catch (err) {
     console.log("Failed to log headers:", e);
   }
 
@@ -48,7 +48,7 @@ serve(async (req: Request) => {
         try {
           body = JSON.parse(raw);
           console.log("Parsed JSON body:", body);
-        } catch (e) {
+        } catch (err) {
           console.warn("Failed to parse body as JSON:", e);
           // keep raw in body for debugging
           body = { rawBody: raw };
@@ -91,28 +91,25 @@ serve(async (req: Request) => {
     });
   }
 
-  // --- send to Resend
-  try {
-    const payload = {
-      from: "WyniesiemyTo <onboarding@resend.dev>",
-      to: ["wyniesiemyto@gmail.com"],
-      subject: `Nowe zapytanie od ${name}`,
-      html: `
-        <h2>Nowe zapytanie z formularza</h2>
-        <p><strong>Imię:</strong> ${name}</p>
-        <p><strong>Telefon:</strong> ${phone}</p>
-        <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
-        <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
-        <p><strong>Wiadomość:</strong></p>
-        <p>${String(message).replace(/\n/g, "<br>")}</p>
-        ${
-          attachments && attachments.length
-            ? '<p><strong>Załączniki:</strong></p>' + attachments.map((u: string) => `<p><a href="${u}">${u}</a></p>`).join("")
-            : ""
-        }
-      `
-    };
-
+const payload = {
+  from: "WyniesiemyTo <onboarding@resend.dev>", // ← Twoja zweryfikowana domena
+  to: ["wyniesiemyto@gmail.com"],
+  subject: `Nowe zapytanie od ${name}`,
+  html: `
+    <h2>Nowe zapytanie z formularza</h2>
+    <p><strong>Imię:</strong> ${name}</p>
+    <p><strong>Telefon:</strong> ${phone}</p>
+    <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
+    <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
+    <p><strong>Wiadomość:</strong></p>
+    <p>${String(message).replace(/\n/g, "<br>")}</p>
+    ${
+      attachments && attachments.length
+        ? '<p><strong>Załączniki:</strong></p>' + attachments.map((u: string) => `<p><a href="${u}">${u}</a></p>`).join("")
+        : ""
+    }
+  `
+};
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -127,7 +124,7 @@ serve(async (req: Request) => {
     if (respText && respText.length > 0) {
       try {
         respBody = JSON.parse(respText);
-      } catch {
+      } catch (err) {
         respBody = respText;
       }
     }
@@ -153,4 +150,4 @@ serve(async (req: Request) => {
       headers: corsHeadersBase,
     });
   }
-});
+;
