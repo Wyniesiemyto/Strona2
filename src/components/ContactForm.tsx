@@ -70,32 +70,26 @@ for (let i = 0; i < files.length; i++) {
 // });
 
 const { error } = await supabase.functions.invoke('send-contact-email', {
-  body: JSON.stringify({
-    name: formData.name,
-    phone: formData.phone,
-    message: formData.message,
-    needsWasteCollection: formData.needsWasteCollection || 'nie określono',
-    contactHours: formData.contactHours || 'dowolne',
-    attachments: attachmentUrls
-  }),
-  headers: { 'Content-Type': 'application/json' }
-});
-if (error) {
-  console.error(error);
-  setSubmitStatus('error');
-} else {
-  setSubmitStatus('success');
-  setFormData({
-    name: '',
-    phone: '',
-    message: '',
-    needsWasteCollection: '',
-    contactHours: ''
-  });
-  setFiles([]);
-  setConsent(false);
-  onSubmitSuccess?.();
-}
+   body: JSON.stringify({
+     name: formData.name,
+     phone: formData.phone,
+     message: formData.message,
+     needsWasteCollection: formData.needsWasteCollection || 'nie określono',
+     contactHours: formData.contactHours || 'dowolne',
+     attachments: attachmentUrls
+   }),
+   headers: { 'Content-Type': 'application/json' }
+ });
+ if (error) {
+   console.error(error);
+   setSubmitStatus('error');
+ } else {
+   setSubmitStatus('success');
+   setFormData({ name:'', phone:'', message:'', needsWasteCollection:'', contactHours:'' });
+   setFiles([]);
+   setConsent(false);
+   onSubmitSuccess?.();
+ }
 
  try {
       if (Error) {
