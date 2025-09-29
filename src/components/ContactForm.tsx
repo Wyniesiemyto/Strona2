@@ -58,17 +58,7 @@ for (let i = 0; i < files.length; i++) {
   }
 }
 
-// const { error } = await supabase.functions.invoke('send-contact-email', {
-//   body: JSON.stringify({
-//     name: formData.name,
-//     phone: formData.phone,
-//     message: formData.message,
-//     needsWasteCollection: formData.needsWasteCollection,
-//     contactHours: formData.contactHours,
-//     attachments: attachmentUrls
-//   }),
-//   headers: { 'Content-Type': 'application/json' }
-// });
+
 
 const response = await fetch(
   'https://puknkvmgocmjgcgjynda.supabase.co/functions/v1/send-contact-email',
@@ -98,32 +88,10 @@ if (!response.ok) {
    setFiles([]);
    setConsent(false);
    onSubmitSuccess?.();
- }
-
- try {
-      if (Error) {
-        console.error(Error);
-        setSubmitStatus('error');
-      } else {
-        setSubmitStatus('success');
-        setFormData({
-          name: '',
-          phone: '',
-          message: '',
-          needsWasteCollection: '',
-          contactHours: ''
-        });
-        setFiles([]);
-        setConsent(false);
-        onSubmitSuccess?.();
-      }
-    } catch (err) {
-      console.error(err);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+}
+  setIsSubmitting(false);
+  
+};
 
   return (
     <div className="bg-gray-50 p-8 rounded-xl">
