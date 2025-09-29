@@ -82,6 +82,10 @@ if (!name || !phone || !message) {
   });
 }
 
+// I ustaw domyślne wartości:
+const needsWasteCollection = body.needsWasteCollection || "nie określono";
+const contactHours = body.contactHours || "dowolne";
+
   // --- dry-run if no API key
   if (!RESEND_API_KEY) {
     console.log("RESEND_API_KEY missing — DRY RUN. Payload:", { name, phone, message, needsWasteCollection, contactHours, attachments });
@@ -113,7 +117,7 @@ try {
   const emailResponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${re_fpwdLgxM_NG3MNbZera69xKDkRapFBQa8}`,
+      "Authorization": `Bearer ${RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
