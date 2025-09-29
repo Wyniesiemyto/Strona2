@@ -100,8 +100,6 @@ try {
       <h2>Nowe zapytanie z formularza</h2>
       <p><strong>Imię:</strong> ${name}</p>
       <p><strong>Telefon:</strong> ${phone}</p>
-      <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
-      <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
       <p><strong>Wiadomość:</strong></p>
       <p>${String(message).replace(/\n/g, "<br>")}</p>
       ${
@@ -115,7 +113,7 @@ try {
   const emailResponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${RESEND_API_KEY}`,
+      "Authorization": `Bearer ${re_fpwdLgxM_NG3MNbZera69xKDkRapFBQa8}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
