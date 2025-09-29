@@ -75,12 +75,12 @@ serve(async (req: Request) => {
 
   console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
 
-  if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
-    return new Response(JSON.stringify({ error: "Wszystkie pola są wymagane" }), {
-      status: 400,
-      headers: corsHeadersBase,
-    });
-  }
+if (!name || !phone || !message) {
+  return new Response(JSON.stringify({ error: "Imię, telefon i wiadomość są wymagane" }), {
+    status: 400,
+    headers: corsHeadersBase,
+  });
+}
 
   // --- dry-run if no API key
   if (!RESEND_API_KEY) {
