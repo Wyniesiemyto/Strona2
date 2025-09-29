@@ -70,12 +70,12 @@ for (let i = 0; i < files.length; i++) {
 
 const { error } = await supabase.functions.invoke('send-contact-email', {
   body: JSON.stringify({
-    name: formData.name,
-    phone: formData.phone,
-    message: formData.message,
-    needsWasteCollection: formData.needsWasteCollection,
-    contactHours: formData.contactHours,
-    attachments: attachmentUrls // <- tu URL-e z Supabase Storage
+    name: formData.name || "",
+    phone: formData.phone || "",
+    message: formData.message || "",
+    needsWasteCollection: formData.needsWasteCollection || "nie",
+    contactHours: formData.contactHours || "",
+    attachments: attachmentUrls || []  // zawsze tablica
   }),
   headers: { 'Content-Type': 'application/json' }
 });
