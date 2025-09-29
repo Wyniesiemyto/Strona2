@@ -145,7 +145,7 @@ const { error } = await supabase.functions.invoke('send-contact-email', {
             className="w-full px-4 py-3 border rounded-lg focus:ring-orange-500"
           />
         </div>
-        //
+        
          <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">Wiadomość *</label>
           <textarea
