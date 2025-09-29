@@ -49,7 +49,7 @@ serve(async (req: Request) => {
           body = JSON.parse(raw);
           console.log("Parsed JSON body:", body);
         } catch (err) {
-          console.warn("Failed to parse body as JSON:", e);
+          console.warn("Failed to parse body as JSON:", err);
           // keep raw in body for debugging
           body = { rawBody: raw };
         }
@@ -91,63 +91,65 @@ serve(async (req: Request) => {
     });
   }
 
-const payload = {
-  from: "WyniesiemyTo <onboarding@resend.dev>", // ← Twoja zweryfikowana domena
-  to: ["wyniesiemyto@gmail.com"],
-  subject: `Nowe zapytanie od ${name}`,
-  html: `
-    <h2>Nowe zapytanie z formularza</h2>
-    <p><strong>Imię:</strong> ${name}</p>
-    <p><strong>Telefon:</strong> ${phone}</p>
-    <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
-    <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
-    <p><strong>Wiadomość:</strong></p>
-    <p>${String(message).replace(/\n/g, "<br>")}</p>
-    ${
-      attachments && attachments.length
-        ? '<p><strong>Załączniki:</strong></p>' + attachments.map((u: string) => `<p><a href="${u}">${u}</a></p>`).join("")
-        : ""
-    }
-  `
-};
-    const emailResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const respText = await emailResponse.text();
-    let respBody: any = null;
-    if (respText && respText.length > 0) {
-      try {
-        respBody = JSON.parse(respText);
-      } catch (err) {
-        respBody = respText;
+try {
+  const payload = {
+    from: "WyniesiemyTo <onboarding@resend.dev>",
+    to: ["wyniesiemyto@gmail.com"],
+    subject: `Nowe zapytanie od ${name}`,
+    html: `
+      <h2>Nowe zapytanie z formularza</h2>
+      <p><strong>Imię:</strong> ${name}</p>
+      <p><strong>Telefon:</strong> ${phone}</p>
+      <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
+      <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
+      <p><strong>Wiadomość:</strong></p>
+      <p>${String(message).replace(/\n/g, "<br>")}</p>
+      ${
+        attachments && attachments.length
+          ? '<p><strong>Załączniki:</strong></p>' + attachments.map((u: string) => `<p><a href="${u}">${u}</a></p>`).join("")
+          : ""
       }
+    `
+  };
+
+  const emailResponse = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const respText = await emailResponse.text();
+  let respBody: any = null;
+  if (respText && respText.length > 0) {
+    try {
+      respBody = JSON.parse(respText);
+    } catch (err) {
+      respBody = respText;
     }
+  }
 
-    console.log("Resend response:", { status: emailResponse.status, body: respBody });
+  console.log("Resend response:", { status: emailResponse.status, body: respBody });
 
-    if (!emailResponse.ok) {
-      console.error("Provider error:", { status: emailResponse.status, body: respBody });
-      return new Response(JSON.stringify({ error: "Provider error", providerStatus: emailResponse.status, providerBody: respBody }), {
-        status: 500,
-        headers: corsHeadersBase,
-      });
-    }
-
-    return new Response(JSON.stringify({ success: true, message: "Wiadomość wysłana" }), {
-      status: 200,
-      headers: corsHeadersBase,
-    });
-  } catch (err) {
-    console.error("Error sending email (catch):", err);
-    return new Response(JSON.stringify({ error: "Wystąpił błąd podczas wysyłania wiadomości." }), {
+  if (!emailResponse.ok) {
+    console.error("Provider error:", { status: emailResponse.status, body: respBody });
+    return new Response(JSON.stringify({ error: "Provider error", providerStatus: emailResponse.status, providerBody: respBody }), {
       status: 500,
       headers: corsHeadersBase,
     });
   }
-;
+
+  return new Response(JSON.stringify({ success: true, message: "Wiadomość wysłana" }), {
+    status: 200,
+    headers: corsHeadersBase,
+  });
+
+} catch (err) {
+  console.error("Error sending email:", err);
+  return new Response(JSON.stringify({ error: "Wystąpił błąd podczas wysyłania wiadomości." }), {
+    status: 500,
+    headers: corsHeadersBase,
+  });
+}})
