@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle, X, Paperclip } from 'lucide-react';
-import { supabase  } from '@/integrations/supabase/client';
+import { supabase, SUPABASE_PUBLISHABLE_KEY, SUPABASE_PUBLISHABLE_KEY as supabaseKey } from '@/integrations/supabase/client';
+
 
 
 interface ContactFormProps {
@@ -69,21 +70,29 @@ for (let i = 0; i < files.length; i++) {
 //   headers: { 'Content-Type': 'application/json' }
 // });
 
-const { error } = await supabase.functions.invoke('send-contact-email', {
-   body: JSON.stringify({
-     name: formData.name,
-     phone: formData.phone,
-     message: formData.message,
-     needsWasteCollection: formData.needsWasteCollection || 'nie określono',
-     contactHours: formData.contactHours || 'dowolne',
-     attachments: attachmentUrls
-   }),
-   headers: { 'Content-Type': 'application/json' }
- });
- if (error) {
-   console.error(error);
-   setSubmitStatus('error');
- } else {
+const response = await fetch(
+  'https://puknkvmgocmjgcgjynda.supabase.co/functions/v1/send-contact-email',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SUPABASE_PUBLISHABLE_KEY,             // Twój PUBLIC Key z supabase/client
+      authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+    },
+    body: JSON.stringify({
+      name: formData.name,
+      phone: formData.phone,
+      message: formData.message,
+      needsWasteCollection: formData.needsWasteCollection || 'nie określono',
+      contactHours: formData.contactHours || 'dowolne',
+      attachments: attachmentUrls
+    })
+  }
+);
+if (!response.ok) {
+  console.error('Edge Function error:', await response.json());
+  setSubmitStatus('error');
+} else {
    setSubmitStatus('success');
    setFormData({ name:'', phone:'', message:'', needsWasteCollection:'', contactHours:'' });
    setFiles([]);
