@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle, X, Paperclip } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase as supabaseClient } from '@/integrations/supabase/client';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -68,21 +74,46 @@ for (let i = 0; i < files.length; i++) {
 //   headers: { 'Content-Type': 'application/json' }
 // });
 
-const { error } = await supabase.functions.invoke('send-contact-email', {
+const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-contact-email`;
+const headers = {
+  'Content-Type': 'application/json',
+  apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`
+};
+
+const response = await fetch(url, {
+  method: 'POST',
+  headers,
   body: JSON.stringify({
-    name: formData.name || "",
-    phone: formData.phone || "",
-    message: formData.message || "",
-    needsWasteCollection: formData.needsWasteCollection || "nie",
-    contactHours: formData.contactHours || "",
-    attachments: attachmentUrls || []  // zawsze tablica
-  }),
-  headers: { 'Content-Type': 'application/json' }
+    name: formData.name,
+    phone: formData.phone,
+    message: formData.message,
+    needsWasteCollection: formData.needsWasteCollection || 'nie określono',
+    contactHours: formData.contactHours || 'dowolne',
+    attachments: attachmentUrls
+  })
 });
 
+if (!response.ok) {
+  console.error('Edge Function error:', await response.json());
+  setSubmitStatus('error');
+} else {
+  setSubmitStatus('success');
+  setFormData({
+    name: '',
+    phone: '',
+    message: '',
+    needsWasteCollection: '',
+    contactHours: ''
+  });
+  setFiles([]);
+  setConsent(false);
+  onSubmitSuccess?.();
+}
+
  try {
-      if (error) {
-        console.error(error);
+      if (Error) {
+        console.error(Error);
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');

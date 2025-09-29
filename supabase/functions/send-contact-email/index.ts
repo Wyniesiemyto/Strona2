@@ -66,15 +66,14 @@ serve(async (req: Request) => {
   }
 
   // --- validation
-  const name = body.name;
-  const phone = body.phone;
-  const message = body.message;
-  const needsWasteCollection = body.needsWasteCollection || "nie określono";
-  const contactHours = body.contactHours || "dowolne";
-  const attachments = body.attachments || [];
+const name = body.name;
+const phone = body.phone;
+const message = body.message;
+const needsWasteCollection = body.needsWasteCollection || "nie określono";
+const contactHours = body.contactHours || "dowolne";
+const attachments = body.attachments || [];
 
-  console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
-
+// Validate only truly required fields
 if (!name || !phone || !message) {
   return new Response(JSON.stringify({ error: "Imię, telefon i wiadomość są wymagane" }), {
     status: 400,
