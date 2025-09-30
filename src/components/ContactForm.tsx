@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle, X, Paperclip } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase, SUPABASE_PUBLISHABLE_KEY, SUPABASE_PUBLISHABLE_KEY as supabaseKey } from '@/integrations/supabase/client';
 
 
@@ -9,6 +10,7 @@ interface ContactFormProps {
 }
 
 export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => {
+  const navigate = useNavigate();
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -83,11 +85,13 @@ if (!response.ok) {
   console.error('Edge Function error:', await response.json());
   setSubmitStatus('error');
 } else {
-   setSubmitStatus('success');
-   setFormData({ name:'', phone:'', message:'', needsWasteCollection:'', contactHours:'' });
-   setFiles([]);
-   setConsent(false);
-   onSubmitSuccess?.();
+setFormData({ name:'', phone:'', message:'', needsWasteCollection:'', contactHours:'' });
+      setFiles([]);
+      setConsent(false);
+      onSubmitSuccess?.();
+      
+      // PRZEKIERUJ NA STRONĘ PODZIĘKOWANIA
+      navigate('/thank-you');
 }
   setIsSubmitting(false);
   
@@ -96,14 +100,7 @@ if (!response.ok) {
   return (
     <div className="bg-gray-50 p-8 rounded-xl">
       <h3 className="text-2xl font-bold text-gray-900 mb-6">Wyślij wiadomość</h3>
-      <div className="space-y-6">
-        {submitStatus === 'success' && (
-          <div className="bg-green-50 border border-green-200 p-4 flex items-center gap-3 rounded">
-            <CheckCircle className="h-5 w-5 text-green-500" />
-            <span className="text-green-700">Dziękujemy! Skontaktujemy się wkrótce.</span>
-          </div>
-        )}
-        {submitStatus === 'error' && (
+       {submitStatus === 'error' && (
           <div className="bg-red-50 border border-red-200 p-4 flex items-center gap-3 rounded">
             <X className="h-5 w-5 text-red-500" />
             <span className="text-red-700">Błąd wysyłki. Spróbuj ponownie lub zadzwoń.</span>
@@ -196,6 +193,5 @@ if (!response.ok) {
           {isSubmitting ? 'Wysyłanie...' : 'Wyślij wiadomość'}
         </button>
       </div>
-    </div>
   );
 };
