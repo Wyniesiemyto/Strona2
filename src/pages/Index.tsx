@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { OptimizedImage  } from '@/components/OptimizedImage';
+
+
+
 import { 
   Phone, 
   Mail, 
