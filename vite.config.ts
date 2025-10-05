@@ -4,6 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa'; // DODAJ
 
+
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -14,7 +15,12 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     // DODAJ PWA PLUGIN:
     VitePWA({
-      registerType: 'autoUpdate',
+      injectRegister: null,
+      srcDir: 'src',
+      filename: 'service-worker.ts',
+      injectManifest: {
+       swSrc: 'src/service-worker.ts',  // wskazuje plik service-worker.ts
+     },
       includeAssets: ['favicon.ico', 'logo.png', '*.svg'],
       manifest: {
         name: 'WyniesiemyTo - Przeprowadzki Żory',
@@ -38,20 +44,6 @@ export default defineConfig(({ mode }) => ({
           }
         ]
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-        runtimeCaching: [{
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'google-fonts-cache',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-            }
-          }
-        }]
-      }
     })
   ].filter(Boolean),
   
