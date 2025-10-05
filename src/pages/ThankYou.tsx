@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle, Home, Phone, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ThankYou = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (typeof gtag_report_conversion === 'function') {
+      gtag_report_conversion();
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center px-4">
