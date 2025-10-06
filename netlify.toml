@@ -2,8 +2,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
-[build]
-  publish = "dist"
 
 [security]
   # Wyłącza domyślne CSP Netlify
