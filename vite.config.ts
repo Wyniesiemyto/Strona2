@@ -51,6 +51,10 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
+      input: {
+      main: 'index.html',
+      sw: 'src/service-worker.ts'
+    },
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
