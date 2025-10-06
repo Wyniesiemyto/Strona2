@@ -41,6 +41,10 @@
       https://www.google-analytics.com
       https://pagead2.googlesyndication.com
       https://googleads.g.doubleclick.net
+      https://www.google.com/pagead/
+      https://googleads.g.doubleclick.net/pagead/
+      https://googleads.g.doubleclick.net
+      https://googleads.g.doubleclick.net/pagead/viewthroughconversion/
       https://www.googletagmanager.com
       https://www.googleadservices.com
       https://www.google.com
@@ -50,6 +54,8 @@
     connect-src 'self'
       https://puknkvmgocmjgcgjynda.supabase.co
       https://www.google.com
+      https://www.google.com/pagead/
+      https://googleads.g.doubleclick.net
       https://www.google-analytics.com
       https://www.googletagmanager.com
       https://www.googleadservices.com
