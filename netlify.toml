@@ -29,16 +29,17 @@
         https://tagassistant.google.com
         data:;
       connect-src 'self'
-        https://www.googletagmanager.com
-        https://www.google-analytics.com
-        https://stats.g.doubleclick.net
-        https://www.googleadservices.com
-        https://pagead2.googlesyndication.com
-        https://tagassistant.google.com
-        https://*.googleapis.com
-        https://*.gstatic.com
-        https://*.doubleclick.net
-        https://www.google.com/ccm/collect;
+  https://puknkvmgocmjgcgjynda.supabase.co
+  https://www.googletagmanager.com
+  https://www.google-analytics.com
+  https://stats.g.doubleclick.net
+  https://www.googleadservices.com
+  https://pagead2.googlesyndication.com
+  https://tagassistant.google.com
+  https://*.googleapis.com
+  https://*.gstatic.com
+  https://*.doubleclick.net
+  https://www.google.com/ccm/collect;
       img-src 'self' data:
         https://www.google-analytics.com
         https://pagead2.googlesyndication.com
