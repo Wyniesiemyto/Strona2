@@ -12,7 +12,7 @@
     Content-Security-Policy = """
       default-src 'self';
       script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com/recaptcha/;
-      script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' data: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com/recaptcha/api.js;
+      script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' data: https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com/recaptcha/api.js https://www.gstatic.com;
       connect-src 'self' https://*.supabase.co https://www.googletagmanager.com https://www.google-analytics.com https://*.gstatic.com https://*.googleapis.com;
       img-src 'self' data: https://www.google-analytics.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
