@@ -3,6 +3,5 @@
   to = "/index.html"
   status = 200
 
-[security]
-  # Wyłącza domyślne CSP Netlify
-  disable_content_security_policy = true
+[build]
+  publish = "dist"
