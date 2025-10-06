@@ -5,3 +5,6 @@
 
 [build]
   publish = "dist"
+
+[security]
+  disable_content_security_policy = true
