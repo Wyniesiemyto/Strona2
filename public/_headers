@@ -1,5 +1,6 @@
 /*
-  Content-Security-Policy: default-src 'self'; base-uri 'self';
+  Content-Security-Policy: default-src 'self';
+    base-uri 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:
       https://www.googletagmanager.com
       https://www.google-analytics.com
