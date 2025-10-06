@@ -1,26 +1,24 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
+
 import { VitePWA } from 'vite-plugin-pwa'; // DODAJ
 
-
 export default defineConfig(({ mode }) => ({
+  base: './',               // <-- tutaj dodaj 'base'
   server: {
     host: "::",
     port: 8080,
   },
   plugins: [
-    react(), 
-    mode === "development" && componentTagger(),
-    // DODAJ PWA PLUGIN:
+    react(),
     VitePWA({
       injectRegister: null,
       srcDir: 'src',
       filename: 'service-worker.ts',
       injectManifest: {
-       swSrc: 'src/service-worker.ts',  // wskazuje plik service-worker.ts
-     },
+        swSrc: 'src/service-worker.ts',
+      },
       includeAssets: ['favicon.ico', 'logo.png', '*.svg'],
       manifest: {
         name: 'WyniesiemyTo - Przeprowadzki Żory',
@@ -38,7 +36,7 @@ export default defineConfig(({ mode }) => ({
             type: 'image/png'
           },
           {
-            src: '/favicon-512x512.png', 
+            src: '/favicon-512x512.png',
             sizes: '512x512',
             type: 'image/png'
           }
@@ -46,7 +44,6 @@ export default defineConfig(({ mode }) => ({
       },
     })
   ].filter(Boolean),
-  
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -64,4 +61,4 @@ export default defineConfig(({ mode }) => ({
       }
     }
   }
-}));
+}))
