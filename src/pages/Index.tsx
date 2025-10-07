@@ -83,50 +83,58 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-16 pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="mb-8">
-              <Truck className="h-20 w-20 text-orange-500 mx-auto mb-4" />
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Wynosimy Twoje problemy!
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 mb-4">
-              Profesjonalne usługi przeprowadzkowe, transport i wywóz w Żorach i okolicy.
-            </p>
-            <p className="text-lg md:text-xl font-semibold text-orange-600 mb-12">
-              <strong>Szybko, uczciwie i w dobrej cenie.</strong>
-            </p>
+     {/* Hero Section */}
+<section className="relative pt-16 pb-24">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center">
+      <div className="mb-8">
+        <Truck className="h-20 w-20 text-orange-500 mx-auto mb-4" />
+      </div>
+      
+      <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+        Wynosimy Twoje problemy!
+      </h1>
+      
+      <p className="text-xl md:text-2xl text-gray-600 mb-4">
+        Profesjonalne usługi przeprowadzkowe, transport i wywóz w Żorach i okolicy.
+      </p>
+      <p className="text-lg md:text-xl font-semibold text-orange-600 mb-12">
+        <strong>Szybko, uczciwie i w dobrej cenie.</strong>
+      </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-  <a href="tel:504729105" className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-    <Phone size={24} />
-    Zadzwoń teraz: 504 729 105
-  </a>
-  
-  <button 
-    onClick={() => scrollToSection('contact')}
-    className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3"
-  >
-    Umów termin
-    <ArrowRight className="h-5 w-5" />
-  </button>
-</div>
+      {/* Zmienione przyciski */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+        {/* Duży przycisk Darmowa wycena */}
+        <a
+          href="#contact"
+          className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-2xl text-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        >
+          Darmowa wycena
+        </a>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+        {/* Telefon 1 */}
+        <a
+          href="tel:504729105"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-xl text-lg transition duration-300 shadow-sm hover:shadow-md"
+        >
+          Zadzwoń: 504 729 105
+        </a>
+        {/* Telefon 2 */}
+        <a
+          href="tel:798598993"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-xl text-lg transition duration-300 shadow-sm hover:shadow-md"
+        >
+          Zadzwoń: 798 598 993
+        </a>
+      </div>
 
-            <p className="text-gray-600 text-lg">
-              Drugi numer: 798 598 993
-            </p>
-            
-            <p className="text-gray-700 text-lg mt-4">
-              <strong>Właściciele:</strong> Kacper Zagermann / Patryk Sylwerski
-            </p>
-          </div>
-        </div>
-      </section>
+      <p className="text-gray-700 text-lg mt-4">
+        <strong>Właściciele:</strong> Kacper Zagermann / Patryk Sylwerski
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* Services Section */}
       <section id="services" className="py-24 bg-white">
