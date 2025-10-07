@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 declare global {
   interface Window {
     dataLayer: any[];
+    gtag: (...args: any[]) => void;
   }
 }
 
@@ -13,23 +14,15 @@ declare global {
 const ThankYou = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Inicjalizacja dataLayer (jeśli jeszcze nie istnieje)
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag(...args: any[]) {
-      (window as any).dataLayer.push(args);
-    }
-
-    // Inicjalizacja Google Ads tagu (upewnij się, że globalny gtag.js jest załadowany w index.html)
-    gtag('js', new Date());
-    gtag('config', 'AW-17607352178');
-
-    // Wysłanie konwersji do Google Ads
-    gtag('event', 'conversion', {
+ useEffect(() => {
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'conversion', {
       send_to: 'AW-17607352178/bzc-CPOc66QbEPK-68tB'
     });
-  }, []);
+  } else {
+    console.warn('gtag nie jest dostępny – upewnij się, że skrypt Google Ads jest załadowany.');
+  }
+}, []);
 
 
   return (
