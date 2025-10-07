@@ -105,13 +105,13 @@ const Index = () => {
 
       {/* Duży przycisk Darmowa wycena */}
       <div className="flex justify-center mb-4">
-        <a
-          href="#contact"
+        <button
+          onClick={() => scrollToSection('contact')}
           className="flex items-center justify-center w-full sm:w-[492px] bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
         >
           Darmowa wycena
           <ArrowRight className="h-6 w-6 ml-3" />
-        </a>
+        </button>
       </div>
 
       {/* Dwa przyciski telefoniczne */}
