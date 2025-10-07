@@ -1,6 +1,20 @@
 import React, { useEffect } from 'react';
 import { CheckCircle, Home, Phone, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17607352178"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17607352178');
+
+  // WYWOŁANIE KONWERSJI PO ZAŁADOWANIU STRONY
+  gtag('event', 'conversion', {
+      'send_to': 'AW-17607352178/bzc-CPOc66QbEPK-68tB'
+  });
+</script>
+
 
 const ThankYou = () => {
   const navigate = useNavigate();
