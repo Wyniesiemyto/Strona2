@@ -84,6 +84,7 @@ const Index = () => {
       </nav>
 
      {/* Hero Section */}
+{/* Hero Section */}
 <section className="relative pt-16 pb-24">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className="text-center">
@@ -102,30 +103,32 @@ const Index = () => {
         <strong>Szybko, uczciwie i w dobrej cenie.</strong>
       </p>
 
-      {/* Zmienione przyciski */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-        {/* Duży przycisk Darmowa wycena */}
+      {/* Duży przycisk Darmowa wycena */}
+      <div className="flex justify-center mb-4">
         <a
           href="#contact"
-          className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-2xl text-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          className="flex items-center justify-center w-full sm:w-[492px] bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xl transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
         >
           Darmowa wycena
+          <ArrowRight className="h-6 w-6 ml-3" />
         </a>
       </div>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-        {/* Telefon 1 */}
+
+      {/* Dwa przyciski telefoniczne */}
+      <div className="flex justify-center gap-4">
         <a
           href="tel:504729105"
-          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-xl text-lg transition duration-300 shadow-sm hover:shadow-md"
+          className="flex items-center bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium py-3 px-6 rounded-xl text-lg transition duration-300 shadow-sm hover:shadow-md"
         >
-          Zadzwoń: 504 729 105
+          <Phone className="h-5 w-5 mr-2" />
+          504 729 105
         </a>
-        {/* Telefon 2 */}
         <a
           href="tel:798598993"
-          className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-xl text-lg transition duration-300 shadow-sm hover:shadow-md"
+          className="flex items-center bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium py-3 px-6 rounded-xl text-lg transition duration-300 shadow-sm hover:shadow-md"
         >
-          Zadzwoń: 798 598 993
+          <Phone className="h-5 w-5 mr-2" />
+          798 598 993
         </a>
       </div>
 
